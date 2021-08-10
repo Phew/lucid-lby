@@ -41,7 +41,9 @@ void Shots::OnShotFire(Player* target, float damage, int bullets, LagRecord* rec
 }
 
 void Shots::OnImpact(IGameEvent* evt) {
-	int        attacker;
+	int         attacker, victim, group, hp;
+	float       damage;
+	std::string name;
 	vec3_t     pos, dir, start, end;
 	float      time;
 	CGameTrace trace;
@@ -172,10 +174,26 @@ void Shots::OnImpact(IGameEvent* evt) {
 
 	// intersect our historical matrix with the path the shot took.
 	g_csgo.m_engine_trace->ClipRayToEntity(Ray(start, end), MASK_SHOT, target, &trace);
+	victim = g_csgo.m_engine->GetPlayerForUserID(evt->m_keys->FindKey(HASH("userid"))->GetInt());
+	// get the player that was hurt.
+//	Player* target = g_csgo.m_entlist->GetClientEntity< Player* >(victim);
+	//if (!target)
+		//return;
+
+	// get player info.
+	player_info_t info;
+	if (!g_csgo.m_engine->GetPlayerInfo(victim, &info))
+		return;
+
+	// get player name;
+	name = std::string(info.m_name).substr(0, 24);
 
 	// we did not hit jackshit, or someone else.
-	if (!trace.m_entity || !trace.m_entity->IsPlayer() || trace.m_entity != target)
-		g_notify.add(XOR("resolver\n"));
+	if (!trace.m_entity || !trace.m_entity->IsPlayer() || trace.m_entity != target ){
+		std::string s = tfm::format(XOR("missed due to resolver\n"));
+		g_notify.add(s);
+}
+		
 
 
 	// we should have 100% hit this player..
@@ -281,6 +299,7 @@ void Shots::OnHurt(IGameEvent* evt) {
 	}
 
 	// print this shit.
+
 	if (g_menu.main.misc.notifications.get(1)) {
 		std::string out = tfm::format(XOR("hurt %s in the %s for %i damage (%i hp remaining)\n"), name, m_groups[group], (int)damage, hp);
 		g_notify.add(out);
