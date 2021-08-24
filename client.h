@@ -30,7 +30,6 @@ public:
 	void EndMove(CUserCmd* cmd);
 	void BackupPlayers(bool restore);
 	void DoMove();
-	void DrawHUD();
 	void Airstuck();
 	void UnlockHiddenConvars();
 	void ClanTag();

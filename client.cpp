@@ -22,37 +22,7 @@ ulong_t __stdcall Client::init(void* arg) {
 	return 1;
 }
 
-void Client::DrawHUD() {
-	/*if (!g_menu.main.misc.watermark.get())
-		return;*/
 
-	//if (!g_csgo.m_engine->IsInGame())
-	//	return;
-
-	// get time.
-	time_t t = std::time(nullptr);
-	std::ostringstream time;
-	time << std::put_time(std::localtime(&t), ("%H:%M:%S"));
-
-	// get round trip time in milliseconds.
-	int ms = std::max(0, (int)std::round(g_cl.m_latency * 1000.f));
-
-	// get tickrate.
-	int rate = (int)std::round(1.f / g_csgo.m_globals->m_interval);
-
-	// get framerate.
-	int fps = (int)std::round(1.f / g_csgo.m_globals->m_frametime);
-
-	std::stringstream ss;
-	ss << tfm::format(XOR("DoxWhere | fps: %i | ms: %i"), fps, ms);
-
-	render::FontSize_t size = render::hud.size(ss.str().c_str());
-
-	// background
-
-	// text.
-	render::hud.string(m_width - 15, 10, { 255, 255, 255 }, ss.str().c_str(), render::ALIGN_RIGHT);
-}
 
 void Client::UnlockHiddenConvars()
 {
@@ -324,7 +294,6 @@ void Client::OnPaint() {
 	g_indicators.Indicators();
 	g_visuals.aspect_ratio();
 
-	DrawHUD();
 	KillFeed();
 
 	// menu goes last.
@@ -761,7 +730,7 @@ void Client::print(const std::string text, ...) {
 	va_end(list);
 
 	// print to console.
-	g_csgo.m_cvar->ConsoleColorPrintf(colors::yellowgreen, XOR("[doxwhere] "));
+	g_csgo.m_cvar->ConsoleColorPrintf(colors::light_blue, XOR("[doxwhere] "));
 	g_csgo.m_cvar->ConsoleColorPrintf(colors::white, buf.c_str());
 }
 
