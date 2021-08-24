@@ -193,7 +193,7 @@ void Resolver::ResolveWalk(AimPlayer* data, LagRecord* record) {
 	record->m_eye_angles.y = record->m_body;
 
 	// delay body update.
-	//data->m_body_update = record->m_anim_time + 0.22f;
+	data->m_body_update = record->m_anim_time + 0.22f;
 
 	// reset stand and body index.
 	data->m_stand_index = 0;
@@ -348,7 +348,7 @@ void Resolver::LastMoveLby(LagRecord* record, AimPlayer* data, Player* player)
 
 		record->m_mode = Modes::RESOLVE_UNKNOWM;
 
-		//record->m_eye_angles.y = GetDirectionAngle(player->index(), player);
+		record->m_eye_angles.y = GetDirectionAngle(player->index(), player);
 
 		ResolveYawBruteforce(record, player, data);
 
@@ -384,7 +384,7 @@ void Resolver::LastMoveLby(LagRecord* record, AimPlayer* data, Player* player)
 		else
 			record->m_eye_angles.y = away + 180.f;
 
-		//record->m_eye_angles.y = GetLBYRotatedYaw(player->m_flLowerBodyYawTarget(), move->m_body);
+		record->m_eye_angles.y = GetLBYRotatedYaw(player->m_flLowerBodyYawTarget(), move->m_body);
 
 		if (data->m_last_move >= 1)
 			ResolveYawBruteforce(record, player, data);
@@ -1038,7 +1038,7 @@ bool Resolver::IdealFreestand(Player* entity, float& yaw, int damage_tolerance) 
 	penetration::scale(entity, leftdamage, 1.f, HITGROUP_CHEST);
 	penetration::scale(entity, rightdamage, 1.f, HITGROUP_CHEST);
 	penetration::scale(entity, backdamage, 1.f, HITGROUP_CHEST);
-	//damage = penetration::scale(player, damage, 1.f, HITGROUP_CHEST);
+	//penetration::scale(entity, frontdamage, 1.f, HITGROUP_CHEST);
 
 	//leftdamage = autowall->CalculateDamage(latency_based_eye_pos,
 	//	left_eye_pos, local_player, entity).damage;
