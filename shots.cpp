@@ -290,13 +290,6 @@ void Shots::OnHurt(IGameEvent* evt) {
 		g_csgo.m_sound->EmitAmbientSound(XOR("buttons/arena_switch_press_02.wav"), 1.f);
 	}
 
-	if (g_menu.main.misc.hitmarker2.get()) {
-		g_visuals.m_hit_duration = 1.f;
-		g_visuals.m_hit_start = g_csgo.m_globals->m_curtime;
-		g_visuals.m_hit_end = g_visuals.m_hit_start + g_visuals.m_hit_duration;
-
-		PlaySoundA(reinterpret_cast<char*>(stom), nullptr, SND_ASYNC | SND_MEMORY);
-	}
 
 	// print this shit.
 

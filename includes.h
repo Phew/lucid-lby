@@ -107,3 +107,5 @@ using ulong_t = unsigned long;
 #include "callbacks.h"
 #include "menu.h"
 #include "config.h"
+#include "c_config.h"
+#include "singleton.h"

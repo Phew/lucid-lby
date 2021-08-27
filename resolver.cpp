@@ -375,7 +375,7 @@ void Resolver::LastMoveLby(LagRecord* record, AimPlayer* data, Player* player)
 		float delta = record->m_anim_time - move->m_anim_time;
 
 		record->m_mode = Modes::RESOLVE_LASTMOVE;
-		//data->m_last_move
+		data->m_last_move;
 
 		const float at_target_yaw = math::CalcAngle(g_cl.m_local->m_vecOrigin(), player->m_vecOrigin()).y;
 

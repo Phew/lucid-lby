@@ -24,6 +24,13 @@ void math::NormalizeAngle(float& angle) {
     // normalize.
     angle = (angle < 0.f) ? angle + (360.f * rot) : angle - (360.f * rot);
 }
+float math::normalize_yaw(float yaw)
+{
+	float temp_yaw = std::remainder(yaw, 360.f);
+	math::clamp(temp_yaw, -180.f, 180.f);
+
+	return temp_yaw;
+}
 
 vec3_t math::CalcAngle(const vec3_t& vecSource, const vec3_t& vecDestination) {
     vec3_t vAngle;

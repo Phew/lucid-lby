@@ -83,4 +83,3 @@ namespace render {
 	Vertex RotateVertex(const vec2_t& p, const Vertex& v, float angle);
 }
 
-// nitro du hurensohn

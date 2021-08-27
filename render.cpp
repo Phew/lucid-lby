@@ -25,9 +25,9 @@ void render::init() {
 	esp = Font(XOR("Tahoma"), 12, FW_NORMAL, FONTFLAG_DROPSHADOW); 
 	esp_small = Font(XOR("Small Fonts"), 8, FW_NORMAL, FONTFLAG_OUTLINE);
 	hud = Font(XOR("Verdana"), 11, FW_NORMAL, FONTFLAG_ANTIALIAS);
-	indicators = Font(XOR("Verdana"), 16, FW_NORMAL, FONTFLAG_ANTIALIAS);
+	indicators = Font(XOR("Verdana"), 26, FW_BOLD, FONTFLAG_ANTIALIAS | FONTFLAG_DROPSHADOW);
 	cs = Font(XOR("Counter-Strike"), 28, FW_MEDIUM, FONTFLAG_ANTIALIAS | FONTFLAG_DROPSHADOW);
-	indicator = Font(XOR("Verdana"), 19, FW_NORMAL, FONTFLAG_ANTIALIAS);
+	indicator = Font(XOR("Verdana"), 26, FW_BOLD, FONTFLAG_ANTIALIAS | FONTFLAG_DROPSHADOW);
 	logevent = Font(XOR("Lucida Console"), 10, FW_DONTCARE, FONTFLAG_DROPSHADOW);
 	arrows = Font(XOR("Arrows"), 60, FW_NORMAL, FONTFLAG_ANTIALIAS);
 }

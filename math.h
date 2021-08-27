@@ -24,6 +24,7 @@ namespace math {
 
     // normalizes an angle.
     void NormalizeAngle(float& angle);
+	float normalize_yaw(float yaw);
 
     __forceinline float NormalizedAngle(float angle) {
         NormalizeAngle(angle);

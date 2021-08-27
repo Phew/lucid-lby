@@ -2133,7 +2133,6 @@ public:
 	Checkbox autoaccept;
 	Checkbox unlock;
 	Checkbox hitmarker;
-	Checkbox hitmarker2;
 	Checkbox ragdoll_force;
 	Checkbox killfeed;
 	Checkbox clantag;
@@ -2230,9 +2229,6 @@ public:
 		hitmarker.setup(XOR("hitmarker"), XOR("hitmarker"));
 		RegisterElement(&hitmarker, 1);
 
-		hitmarker2.setup(XOR("HAHAHA"), XOR("hitmarker2"));
-		RegisterElement(&hitmarker2, 1);
-
 		ragdoll_force.setup(XOR("ragdoll force"), XOR("ragdoll_force"));
 		RegisterElement(&ragdoll_force, 1);
 
@@ -2252,8 +2248,6 @@ public:
 		slide_walk.setup(XOR("slide walk"), XOR("slide_walk"));
 		RegisterElement(&slide_walk, 1);
 
-		indicators.setup(XOR("indicator box"), XOR("draw_indicators"));
-		RegisterElement(&indicators, 1);
 
 
 		//fov.setup(XOR("override fov"), XOR("fov"));
