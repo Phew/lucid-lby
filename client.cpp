@@ -1,4 +1,6 @@
 #include "includes.h"
+#include <Windows.h>
+#include <LMCons.h>
 
 Client g_cl{ };
 
@@ -7,8 +9,12 @@ typedef void(__thiscall* o_proc_movement)(void*, CMoveData*);
 // loader will set this fucker.
 char username[33] = "\x90\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x90";
 
+
 // init routine.
 ulong_t __stdcall Client::init(void* arg) {
+	TCHAR username[UNLEN + 1];
+	DWORD size = UNLEN + 1;
+	GetUserName((TCHAR*)username, &size);
 	// if not in interwebz mode, the driver will not set the username.
 	g_cl.m_user = XOR("doxwhere");
 
@@ -17,7 +23,8 @@ ulong_t __stdcall Client::init(void* arg) {
 		return 0;
 
 	// welcome the user.
-	//g_notify.add(tfm::format(XOR("welcome to doxwhere"), game::GetPlayerName));
+	g_notify.add(tfm::format(XOR("Welcome, %s\n"), username));
+	g_notify.add(tfm::format(XOR("Last updated: 'August 26th, 2021'\n")));
 
 	return 1;
 }
@@ -729,8 +736,10 @@ void Client::print(const std::string text, ...) {
 
 	va_end(list);
 
+
 	// print to console.
-	g_csgo.m_cvar->ConsoleColorPrintf(colors::light_blue, XOR("[doxwhere] "));
+	
+	g_csgo.m_cvar->ConsoleColorPrintf(colors::purple, XOR("[doxwhere] "));
 	g_csgo.m_cvar->ConsoleColorPrintf(colors::white, buf.c_str());
 }
 
