@@ -76,6 +76,7 @@ namespace colors {
 	static Color black{ 0, 0, 0, 255 };
 	static Color yellowgreen{ 182,231,23,255 };
 	static Color red{ 255, 0, 0, 255 };
+	static Color menucolor{ 65, 143, 251, 255 };
 	static Color burgundy{ 0xff2d00b3 };
 	static Color light_blue{ 95, 174, 227, 255 };
 	static Color orange{ 243, 156, 18, 255 };

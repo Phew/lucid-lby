@@ -38,7 +38,7 @@ void Dropdown::draw() {
 
 	// draw label.
 	if (m_use_label)
-		render::menu_shade.string(p.x + LABEL_OFFSET, p.y - 2, { 200, 202, 237, 180 }, m_label);
+		render::menu_shade.string(p.x + LABEL_OFFSET, p.y - 2, { 255, 255, 255, 180 }, m_label);
 
 	// draw border.
 	render::rect(p.x + DROPDOWN_X_OFFSET, p.y + m_offset, m_w - DROPDOWN_X_OFFSET, DROPDOWN_BOX_HEIGHT, { 0, 0, 0, m_parent->m_alpha });
@@ -59,7 +59,7 @@ void Dropdown::draw() {
 			render::rect(p.x + DROPDOWN_X_OFFSET, p.y + m_offset + DROPDOWN_BOX_HEIGHT + DROPDOWN_SEPARATOR, m_w - DROPDOWN_X_OFFSET, m_anim_height + 1, { 0, 0, 0, m_parent->m_alpha });
 
 			// draw items inside.
-			render::rect_filled(p.x + DROPDOWN_X_OFFSET + 1, p.y + m_offset + DROPDOWN_BOX_HEIGHT + DROPDOWN_SEPARATOR + 1, m_w - DROPDOWN_X_OFFSET - 2, m_anim_height - 1, { 0, 0, 0, m_parent->m_alpha });
+			render::rect_filled(p.x + DROPDOWN_X_OFFSET + 1, p.y + m_offset + DROPDOWN_BOX_HEIGHT + DROPDOWN_SEPARATOR + 1, m_w - DROPDOWN_X_OFFSET - 2, m_anim_height - 1, { 41, 41, 41, m_parent->m_alpha });
 
 			// iterate items.
 			for (size_t i{}; i < m_items.size(); ++i) {
