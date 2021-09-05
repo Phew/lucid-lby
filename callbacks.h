@@ -119,6 +119,7 @@ namespace callbacks {
 	bool IsOverrideDamage();
 	void ToggleDMG();
 	void ToggleDT();
+	bool Ticks2Shift();
 	bool AUTO_STOP();
 	bool IsFakeChams();
 	bool IsLocalChams();

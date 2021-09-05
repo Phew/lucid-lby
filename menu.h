@@ -41,6 +41,7 @@ public:
 	Keybind       baim_key;
 	Keybind       override;
 	Keybind		  doubletap;
+	Slider		  ticks;
 	
 
 
@@ -174,6 +175,10 @@ public:
 		doubletap.setup(XOR("doubletap"), XOR("doubletap"));
 		doubletap.SetToggleCallback(callbacks::ToggleDT);
 		RegisterElement(&doubletap, 1);
+
+		ticks.setup(XOR("dt speed"), XOR("ticks-to-shift"), 1.f, 16.f, false, 0, 1.f, 1.f);
+		ticks.AddShowCallback(callbacks::Ticks2Shift);
+		RegisterElement(&ticks, 1);
 	}
 };
 

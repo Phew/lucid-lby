@@ -599,6 +599,10 @@ void callbacks::ToggleDT() {
 	g_aimbot.m_double_tap = !g_aimbot.m_double_tap;
 }
 
+bool callbacks::Ticks2Shift() {
+	return g_menu.main.aimbot.ticks.get();
+}
+
 void callbacks::menu_key() {
 	g_gui.m_open = true;
 }

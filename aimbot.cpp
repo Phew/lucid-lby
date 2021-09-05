@@ -2,8 +2,6 @@
 
 Aimbot g_aimbot{ };;
 
-#define shift_ticks 16
-
 bool CanFireWithExploit(int m_iShiftedTick)
 {
 	float curtime = game::TICKS_TO_TIME(g_cl.m_local->m_nTickBase() - m_iShiftedTick);
@@ -22,7 +20,6 @@ void Aimbot::DoubleTap()
 	static bool did_shift_before = false;
 	static bool reset = true;
 	static int clock = 0;
-	auto ticks_to_shift = shift_ticks;
 	g_cl.can_dt_shoot = false;
 
 	if (CanDT() && !g_csgo.m_gamerules->m_bFreezePeriod());
@@ -38,7 +35,7 @@ void Aimbot::DoubleTap()
 
 				if (clock >= 40)
 				{
-					g_cl.m_tick_to_recharge = ticks_to_shift;
+					g_cl.m_tick_to_recharge = g_menu.main.aimbot.ticks.get();
 					g_cl.can_recharge = true;
 					g_cl.m_tick_to_shift = 0;
 					clock = 0;
@@ -55,7 +52,7 @@ void Aimbot::DoubleTap()
 					if (g_cl.m_cmd->m_buttons & IN_ATTACK)
 					{
 						*g_cl.m_packet = true;
-						g_cl.m_tick_to_shift = ticks_to_shift;
+						g_cl.m_tick_to_shift = g_menu.main.aimbot.ticks.get();
 						reset = true;
 						g_cl.m_charged = false;
 					}
