@@ -24,13 +24,6 @@ void math::NormalizeAngle(float& angle) {
     // normalize.
     angle = (angle < 0.f) ? angle + (360.f * rot) : angle - (360.f * rot);
 }
-float math::normalize_yaw(float yaw)
-{
-	float temp_yaw = std::remainder(yaw, 360.f);
-	math::clamp(temp_yaw, -180.f, 180.f);
-
-	return temp_yaw;
-}
 
 vec3_t math::CalcAngle(const vec3_t& vecSource, const vec3_t& vecDestination) {
     vec3_t vAngle;
@@ -104,7 +97,80 @@ float math::ApproachAngle(float target, float value, float speed) {
     return value;
 }
 
+float math::SegmentToSegment(const vec3_t s1, const vec3_t s2, const vec3_t k1, const vec3_t k2)
+{
+	static auto constexpr epsilon = 0.00000001;
 
+	auto u = s2 - s1;
+	auto v = k2 - k1;
+	const auto w = s1 - k1;
+
+	const auto a = u.dot(u);
+	const auto b = u.dot(v);
+	const auto c = v.dot(v);
+	const auto d = u.dot(w);
+	const auto e = v.dot(w);
+	const auto D = a * c - b * b;
+	float sn, sd = D;
+	float tn, td = D;
+
+	if (D < epsilon) {
+		sn = 0.0;
+		sd = 1.0;
+		tn = e;
+		td = c;
+	}
+	else {
+		sn = b * e - c * d;
+		tn = a * e - b * d;
+
+		if (sn < 0.0) {
+			sn = 0.0;
+			tn = e;
+			td = c;
+		}
+		else if (sn > sd) {
+			sn = sd;
+			tn = e + b;
+			td = c;
+		}
+	}
+
+	if (tn < 0.0) {
+		tn = 0.0;
+
+		if (-d < 0.0)
+			sn = 0.0;
+		else if (-d > a)
+			sn = sd;
+		else {
+			sn = -d;
+			sd = a;
+		}
+	}
+	else if (tn > td) {
+		tn = td;
+
+		if (-d + b < 0.0)
+			sn = 0;
+		else if (-d + b > a)
+			sn = sd;
+		else {
+			sn = -d + b;
+			sd = a;
+		}
+	}
+
+	const float sc = abs(sn) < epsilon ? 0.0 : sn / sd;
+	const float tc = abs(tn) < epsilon ? 0.0 : tn / td;
+
+	m128 n;
+	auto dp = w + u * sc - v * tc;
+	n.f[0] = dp.dot(dp);
+	const auto calc = sqrt_ps(n.v);
+	return reinterpret_cast<const m128*>(&calc)->f[0];
+
+}
 
 void math::VectorAngles(const vec3_t& forward, ang_t& angles, vec3_t* up) {
     vec3_t  left;

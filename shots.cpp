@@ -9,7 +9,7 @@
 
 Shots g_shots{ };
 
-void Shots::OnShotFire(Player* target, float damage, int bullets, LagRecord* record) {
+void Shots::OnShotFire(Player* target, float damage, int bullets, LagRecord* record, int hitbox) {
 
 	// iterate all bullets in this shot.
 	for (int i{ }; i < bullets; ++i) {

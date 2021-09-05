@@ -38,7 +38,7 @@ void MultiDropdown::draw() {
 
 	// draw label.
 	if (m_use_label)
-		render::menu_shade.string(p.x + LABEL_OFFSET, p.y - 2, { 200, 202, 237, 180 }, m_label);
+		render::menu_shade.string(p.x + LABEL_OFFSET, p.y - 2, { 255, 255, 255, 180 }, m_label);
 
 	// draw border.
 	render::rect(p.x + DROPDOWN_X_OFFSET, p.y + m_offset, m_w - DROPDOWN_X_OFFSET, DROPDOWN_BOX_HEIGHT, { 0, 0, 0, m_parent->m_alpha });

@@ -47,7 +47,7 @@ public:
 public:
 	void init() {
 		// title.
-		SetTitle(XOR("aimbot"));
+		SetTitle(XOR("Aimbot"));
 
 		enable.setup(XOR("enable"), XOR("enable"));
 		RegisterElement(&enable);
@@ -65,7 +65,7 @@ public:
 		fov_amount.AddShowCallback(callbacks::IsFovOn);
 		RegisterElement(&fov_amount);
 
-		hitbox.setup(XOR("hitbox"), XOR("hitbox"), { XOR("head"), XOR("chest"), XOR("body"), XOR("arms"), XOR("legs"), XOR("feet") });
+		hitbox.setup(XOR("hitboxes"), XOR("hitbox"), { XOR("head"), XOR("chest"), XOR("body"), XOR("arms"), XOR("legs"), XOR("feet") });
 		RegisterElement(&hitbox);
 
 		hitbox_history.setup(XOR("hitbox history"), XOR("hitbox_history"), { XOR("head"), XOR("chest"), XOR("body"), XOR("arms"), XOR("legs"), XOR("feet") });
@@ -82,14 +82,14 @@ public:
 		body_scale.AddShowCallback(callbacks::IsMultipointBodyOn);
 		RegisterElement(&body_scale);
 
-		minimal_damage.setup(XOR("minimal damage"), XOR("minimal_damage"), 1.f, 100.f, true, 0, 40.f, 1.f);
+		minimal_damage.setup(XOR("minimum damage"), XOR("minimal_damage"), 1.f, 100.f, true, 0, 40.f, 1.f);
 		RegisterElement(&minimal_damage);
 
 		minimal_damage_hp.setup(XOR("scale damage on hp"), XOR("minimal_damage_hp"));
 		minimal_damage_hp.AddShowCallback(callbacks::IsDamageVisible);
 		RegisterElement(&minimal_damage_hp);
 
-		penetrate.setup(XOR("penetrate walls"), XOR("penetrate"));
+		penetrate.setup(XOR("wall penetration"), XOR("penetrate"));
 		RegisterElement(&penetrate);
 
 		penetrate_minimal_damage.setup("", XOR("penetrate_minimal_damage"), 1.f, 100.f, false, 0, 30.f, 1.f);
@@ -101,24 +101,24 @@ public:
 		penetrate_minimal_damage_hp.AddShowCallback(callbacks::IsPenetrationOn);
 		RegisterElement(&penetrate_minimal_damage_hp);
 
-		knifebot.setup(XOR("aimbot with knife"), XOR("knifebot"));
+		knifebot.setup(XOR("knife bot"), XOR("knifebot"));
 		RegisterElement(&knifebot);
 
-		zeusbot.setup(XOR("aimbot with taser"), XOR("zeusbot"));
+		zeusbot.setup(XOR("zeus bot"), XOR("zeusbot"));
 		RegisterElement(&zeusbot);
 
-		debugaim.setup(XOR("aimbot hitchams"), XOR("debugaim"));
+		debugaim.setup(XOR("aimbot debug"), XOR("debugaim"));
 		RegisterElement(&debugaim);
 
 		// col2.
 		zoom.setup(XOR("auto scope"), XOR("zoom"), { XOR("off"), XOR("always"), XOR("hitchance fail") });
 		RegisterElement(&zoom, 1);
 
-		nospread.setup(XOR("compensate spread"), XOR("nospread"));
+		nospread.setup(XOR("spread compensation"), XOR("nospread"));
 		nospread.AddShowCallback(callbacks::IsConfigNS);
 		RegisterElement(&nospread, 1);
 
-		norecoil.setup(XOR("compensate recoil"), XOR("norecoil"));
+		norecoil.setup(XOR("recoil compensation"), XOR("norecoil"));
 		RegisterElement(&norecoil, 1);
 
 		hitchance.setup(XOR("hitchance"), XOR("hitchance"));
@@ -133,10 +133,10 @@ public:
 		ignor_limbs.setup(XOR("ignore limbs when moving"), XOR("ignor_limbs"));
 		RegisterElement(&ignor_limbs, 1);
 
-		lagfix.setup(XOR("predict fake-lag"), XOR("lagfix"));
+		lagfix.setup(XOR("fakelag prediction"), XOR("lagfix"));
 		RegisterElement(&lagfix, 1);
 
-		correct.setup(XOR("correct anti-aim"), XOR("correct"));
+		correct.setup(XOR("anti-aim correction"), XOR("correct"));
 		RegisterElement(&correct, 1);
 
 		baim1.setup(XOR("prefer body aim"), XOR("baim1"), { XOR("always"), XOR("lethal"), XOR("lethal x2"), XOR("fake"), XOR("in air"), XOR("after x misses") });
@@ -163,7 +163,7 @@ public:
 		override.setup(XOR("override on key"), XOR("override"));
 		RegisterElement(&override, 1);
 
-		override_dmg_key.setup(XOR("override damage"), XOR("override_dmg"));
+		override_dmg_key.setup(XOR("min damage override"), XOR("override_dmg"));
 		override_dmg_key.SetToggleCallback(callbacks::ToggleDMG);
 		RegisterElement(&override_dmg_key, 1);
 
@@ -247,7 +247,7 @@ public:
 
 public:
 	void init() {
-		SetTitle(XOR("anti-aim"));
+		SetTitle(XOR("Anti-Aim"));
 
 		enable.setup(XOR("enable"), XOR("enable"));
 		RegisterElement(&enable);
@@ -495,19 +495,6 @@ public:
 		disablefakelagonkey.setup(XOR("disable fake-lag on key"), XOR("disable fake-lag on key"));
 		RegisterElement(&disablefakelagonkey, 1);
 
-		left_side.setup(XOR("left keybind"), XOR("left_side"));
-		left_side.SetToggleCallback(callbacks::ToggleLeftSide);
-		RegisterElement(&left_side);
-
-		right_side.setup(XOR("right keybind"), XOR("right_side"));
-		right_side.SetToggleCallback(callbacks::ToggleRightSide);
-		RegisterElement(&right_side);
-
-		back_side.setup(XOR("back keybind"), XOR("back_side"));
-		back_side.SetToggleCallback(callbacks::ToggleBackSide);
-		RegisterElement(&back_side);
-
-
 		/*fakeduck.setup(XOR("fake duck"), XOR("fakeduck"));
 		RegisterElement(&fakeduck);*/
 	}
@@ -562,21 +549,21 @@ public:
 
 public:
 	void init() {
-		SetTitle(XOR("model"));
+		SetTitle(XOR("Model"));
 
 		box.setup(XOR("boxes"), XOR("box"), { XOR("enemy"), XOR("friendly") });
 		RegisterElement(&box);
 
-		box_enemy.setup(XOR("box enemy color"), XOR("box_enemy"), colors::white);
+		box_enemy.setup(XOR("enemy box color"), XOR("box_enemy"), colors::white);
 		RegisterElement(&box_enemy);
 
-		box_friendly.setup(XOR("box friendly color"), XOR("box_friendly"), colors::white);
+		box_friendly.setup(XOR("team box color"), XOR("box_friendly"), colors::white);
 		RegisterElement(&box_friendly);
 
-		dormant.setup(XOR("dormant enemies"), XOR("dormant"));
+		dormant.setup(XOR("dormant esp"), XOR("dormant"));
 		RegisterElement(&dormant);
 
-		offscreen.setup(XOR("enemy offscreen esp"), XOR("offscreen"));
+		offscreen.setup(XOR("offscreen enemy esp"), XOR("offscreen"));
 		RegisterElement(&offscreen);
 
 		offscreen_color.setup(XOR("offscreen esp color"), XOR("offscreen_color"), colors::white);
@@ -591,13 +578,13 @@ public:
 		health.setup(XOR("health"), XOR("health"), { XOR("enemy"), XOR("friendly") });
 		RegisterElement(&health);
 
-		flags_enemy.setup(XOR("flags enemy"), XOR("flags_enemy"), { XOR("money"), XOR("armor"), XOR("scoped"), XOR("flashed"), XOR("reloading"), XOR("bomb"), XOR("fake") });
+		flags_enemy.setup(XOR("enemy flags"), XOR("flags_enemy"), { XOR("money"), XOR("armor"), XOR("scoped"), XOR("flashed"), XOR("reloading"), XOR("bomb"), XOR("fake") });
 		RegisterElement(&flags_enemy);
 
-		flags_friendly.setup(XOR("flags friendly"), XOR("flags_friendly"), { XOR("money"), XOR("armor"), XOR("scoped"), XOR("flashed"), XOR("reloading"), XOR("bomb") });
+		flags_friendly.setup(XOR("friendly flags"), XOR("flags_friendly"), { XOR("money"), XOR("armor"), XOR("scoped"), XOR("flashed"), XOR("reloading"), XOR("bomb") });
 		RegisterElement(&flags_friendly);
 
-		weapon.setup(XOR("weapon"), XOR("weapon"), { XOR("enemy"), XOR("friendly") });
+		weapon.setup(XOR("weapon esp"), XOR("weapon"), { XOR("enemy"), XOR("friendly") });
 		RegisterElement(&weapon);
 
 		weapon_mode.setup("", XOR("weapon_mode"), { XOR("text"), XOR("icon") }, false);
@@ -631,28 +618,28 @@ public:
 		glow.setup(XOR("glow"), XOR("glow"), { XOR("enemy"), XOR("friendly") });
 		RegisterElement(&glow, 1);
 
-		glow_enemy.setup(XOR("enemy color"), XOR("glow_enemy"), { 180, 60, 120 });
+		glow_enemy.setup(XOR("enemy glow"), XOR("glow_enemy"), { 180, 60, 120 });
 		RegisterElement(&glow_enemy, 1);
 
-		glow_friendly.setup(XOR("friendly color"), XOR("glow_friendly"), { 150, 200, 60 });
+		glow_friendly.setup(XOR("teamate glow"), XOR("glow_friendly"), { 150, 200, 60 });
 		RegisterElement(&glow_friendly, 1);
 
 		glow_blend.setup("", XOR("glow_blend"), 10.f, 100.f, false, 0, 60.f, 1.f, XOR(L"%"));
 		RegisterElement(&glow_blend, 1);
 
-		chams_enemy.setup(XOR("chams enemy"), XOR("chams_enemy"), { XOR("visible"), XOR("invisible") });
+		chams_enemy.setup(XOR("enemy chams"), XOR("chams_enemy"), { XOR("visible"), XOR("invisible") });
 		RegisterElement(&chams_enemy, 1);
 
-		chams_enemy_vis.setup(XOR("color visible"), XOR("chams_enemy_vis"), { 150, 200, 60 });
+		chams_enemy_vis.setup(XOR("visible chams"), XOR("chams_enemy_vis"), { 150, 200, 60 });
 		RegisterElement(&chams_enemy_vis, 1);
 
-		chams_enemy_invis.setup(XOR("color invisible"), XOR("chams_enemy_invis"), { 60, 180, 225 });
+		chams_enemy_invis.setup(XOR("invisible chams"), XOR("chams_enemy_invis"), { 60, 180, 225 });
 		RegisterElement(&chams_enemy_invis, 1);
 
 		chams_enemy_blend.setup("", XOR("chams_enemy_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		RegisterElement(&chams_enemy_blend, 1);
 
-		chams_enemy_history.setup(XOR("chams history"), XOR("chams_history"));
+		chams_enemy_history.setup(XOR("backtrack chams"), XOR("chams_history"));
 		RegisterElement(&chams_enemy_history, 1);
 
 		chams_enemy_history_col.setup(XOR("color"), XOR("chams_history_col"), { 255, 255, 200 });
@@ -661,19 +648,19 @@ public:
 		chams_enemy_history_blend.setup("", XOR("chams_history_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		RegisterElement(&chams_enemy_history_blend, 1);
 
-		chams_friendly.setup(XOR("chams friendly"), XOR("chams_friendly"), { XOR("visible"), XOR("invisible") });
+		chams_friendly.setup(XOR("friendly esp"), XOR("chams_friendly"), { XOR("visible"), XOR("invisible") });
 		RegisterElement(&chams_friendly, 1);
 
-		chams_friendly_vis.setup(XOR("color visible"), XOR("chams_friendly_vis"), { 255, 200, 0 });
+		chams_friendly_vis.setup(XOR("visible color"), XOR("chams_friendly_vis"), { 255, 200, 0 });
 		RegisterElement(&chams_friendly_vis, 1);
 
-		chams_friendly_invis.setup(XOR("color invisible"), XOR("chams_friendly_invis"), { 255, 50, 0 });
+		chams_friendly_invis.setup(XOR("invisible color"), XOR("chams_friendly_invis"), { 255, 50, 0 });
 		RegisterElement(&chams_friendly_invis, 1);
 
 		chams_friendly_blend.setup("", XOR("chams_friendly_blend"), 10.f, 100.f, false, 0, 100.f, 1.f, XOR(L"%"));
 		RegisterElement(&chams_friendly_blend, 1);
 
-		chams_local.setup(XOR("chams local"), XOR("chams_local"));
+		chams_local.setup(XOR("local chams"), XOR("chams_local"));
 		RegisterElement(&chams_local, 1);
 
 		chams_local_col.setup(XOR("color"), XOR("chams_local_col"), { 255, 255, 200 });
@@ -750,15 +737,15 @@ public:
 
 public:
 	void init() {
-		SetTitle(XOR("visual"));
+		SetTitle(XOR("Visual"));
 
 		items.setup(XOR("dropped weapons"), XOR("items"));
 		RegisterElement(&items);
 
-		distance.setup(XOR("distance weapons"), XOR("distance"));
+		distance.setup(XOR("dropped weapons distance"), XOR("distance"));
 		RegisterElement(&distance);
 
-		item_color.setup(XOR("color"), XOR("item_color"), colors::white);
+		item_color.setup(XOR("item color"), XOR("item_color"), colors::white);
 		RegisterElement(&item_color);
 
 		ammo.setup(XOR("dropped weapons ammo"), XOR("ammo"));
@@ -782,10 +769,10 @@ public:
 		planted_c4.setup(XOR("planted c4"), XOR("planted_c4"), { XOR("on screen (2D)"), XOR("on bomb (3D)") });
 		RegisterElement(&planted_c4);
 
-		disableteam.setup(XOR("do not render teammates"), XOR("disableteam"));
+		disableteam.setup(XOR("remove teamates"), XOR("disableteam"));
 		RegisterElement(&disableteam);
 
-		world.setup(XOR("world"), XOR("world"), { XOR("off"), XOR("night"), XOR("fullbright") });
+		world.setup(XOR("world"), XOR("world"), { XOR("off"), XOR("night mode"), XOR("fullbright") });
 		world.SetCallback(Visuals::ModulateWorld);
 		RegisterElement(&world);
 
@@ -797,7 +784,7 @@ public:
 		//world_color.setup(XOR("color"), XOR("world_color"), colors::burgundy);
 		//RegisterElement(&world_color);
 
-		transparent_props.setup(XOR("transparent props"), XOR("transparent_props"));
+		transparent_props.setup(XOR("prop transparency"), XOR("transparent_props"));
 		transparent_props.SetCallback(Visuals::ModulateWorld);
 		RegisterElement(&transparent_props);
 
@@ -806,18 +793,18 @@ public:
 		transparent_props_amount.AddShowCallback(callbacks::IsTransparentProps);
 		RegisterElement(&transparent_props_amount);
 		
-		enemy_radar.setup(XOR("force enemies on radar"), XOR("enemy_radar"));
+		enemy_radar.setup(XOR("radar"), XOR("enemy_radar"));
 		RegisterElement(&enemy_radar);
 
-		chams_fake.setup(XOR("fake chams"), XOR("chams_fake"));
+		chams_fake.setup(XOR("lby chams"), XOR("chams_fake"));
 		RegisterElement(&chams_fake);
 
 
-		chams_fake_mat.setup(XOR("fake material"), XOR("chams_fake_mat"), { XOR("normal"), XOR("flat") });
+		chams_fake_mat.setup(XOR("lby cham material"), XOR("chams_fake_mat"), { XOR("normal"), XOR("flat") });
 		chams_fake_mat.AddShowCallback(callbacks::IsFakeChams);
 		RegisterElement(&chams_fake_mat);
 		
-		chams_fake_col.setup(XOR("color"), XOR("chams_fake_col"), { 255, 255, 200 });
+		chams_fake_col.setup(XOR("lby chams color"), XOR("chams_fake_col"), { 255, 255, 200 });
 		chams_fake_col.AddShowCallback(callbacks::IsFakeChams);
 		RegisterElement(&chams_fake_col);
 
@@ -882,8 +869,8 @@ public:
 		fov_scoped.setup(XOR("override fov when scoped"), XOR("fov_scoped"));
 		RegisterElement(&fov_scoped, 1);
 
-	/*	viewmodel_fov.setup(XOR("override viewmodel fov"), XOR("viewmodel_fov"));
-		RegisterElement(&viewmodel_fov, 1);*/
+		viewmodel_fov.setup(XOR("override viewmodel fov"), XOR("viewmodel_fov"));
+		RegisterElement(&viewmodel_fov, 1);
 
 		viewmodel_fov_amt.setup("", XOR("viewmodel_fov_amt"), 60.f, 140.f, false, 0, 90.f, 1.f, XOR(L"°"));
 		RegisterElement(&viewmodel_fov_amt, 1);
@@ -906,25 +893,25 @@ public:
 		pen_crosshair.setup(XOR("penetration crosshair"), XOR("pen_xhair"));
 		RegisterElement(&pen_crosshair, 1);
 
-		pen_damage.setup(XOR("penetration crosshair damage"), XOR("pen_damage"));
+		pen_damage.setup(XOR("penetration damage"), XOR("pen_damage"));
 		RegisterElement(&pen_damage, 1);
 
 		indicators.setup(XOR("indicators"), XOR("indicators"), { XOR("lby"), XOR("dt"), XOR("min dmg"), XOR("ping skike"), XOR("lag compensation") });
 		RegisterElement(&indicators, 1);
 
-		tracers.setup(XOR("grenade simulation"), XOR("tracers"));
+		tracers.setup(XOR("grenade prediction"), XOR("tracers"));
 		RegisterElement(&tracers, 1);
 
-		impact_beams.setup(XOR("beam bullettracer"), XOR("impact_beams"));
+		impact_beams.setup(XOR("bullet tracer"), XOR("impact_beams"));
 		RegisterElement(&impact_beams, 1);
 
-		impact_beams_color.setup(XOR("bullettracer color"), XOR("impact_beams_color"), colors::light_blue);
+		impact_beams_color.setup(XOR("bullet tracer color"), XOR("impact_beams_color"), colors::light_blue);
 		RegisterElement(&impact_beams_color, 1);
 
-		impact_beams_hurt_color.setup(XOR("bullettracer hurt color"), XOR("impact_beams_hurt_color"), colors::red);
+		impact_beams_hurt_color.setup(XOR("bullet tracer impact color"), XOR("impact_beams_hurt_color"), colors::red);
 		RegisterElement(&impact_beams_hurt_color, 1);
 
-		impact_beams_time.setup(XOR("bullettracer beam time"), XOR("impact_beams_time"), 1.f, 10.f, true, 0, 1.f, 1.f, XOR(L"s"));
+		impact_beams_time.setup(XOR("bullet tracervisual time"), XOR("impact_beams_time"), 1.f, 10.f, true, 0, 1.f, 1.f, XOR(L"s"));
 		RegisterElement(&impact_beams_time, 1);
 
 		thirdperson.setup(XOR("thirdperson"), XOR("thirdperson"));
@@ -958,9 +945,9 @@ public:
 
 public:
 	void init() {
-		SetTitle(XOR("move"));
+		SetTitle(XOR("Move"));
 
-		bhop.setup(XOR("automatic jump"), XOR("bhop"));
+		bhop.setup(XOR("bunny hop"), XOR("bhop"));
 		RegisterElement(&bhop);
 
 		airduck.setup(XOR("duck in air"), XOR("airduck"));
@@ -993,13 +980,10 @@ public:
 		airstuck.setup(XOR("airstuck"), XOR("airstuck"));
 		RegisterElement(&airstuck, 1);
 
-		autopeek.setup(XOR("automatic peek"), XOR("autopeek"));
+		autopeek.setup(XOR("quick peek"), XOR("autopeek"));
 		RegisterElement(&autopeek, 1);
 
-		autostop_always_on.setup(XOR("automatic stop always on"), XOR("auto_stop_always"));
-		RegisterElement(&autostop_always_on, 1);
-
-		autostop_always_on.setup(XOR("automatic stop always on"), XOR("auto_stop_always"));
+		autostop_always_on.setup(XOR("automatic stop always"), XOR("auto_stop_always"));
 		RegisterElement(&autostop_always_on, 1);
 
 		autostop.setup(XOR("automatic stop"), XOR("autostop"));
@@ -1234,7 +1218,7 @@ public:
 
 public:
 	void init() {
-		SetTitle(XOR("skin"));
+		SetTitle(XOR("Skins"));
 
 		enable.setup(XOR("enable"), XOR("skins_enable"));
 		enable.SetCallback(callbacks::ForceFullUpdate);
@@ -2159,9 +2143,9 @@ public:
 
 public:
 	void init() {
-		SetTitle(XOR("misc"));
+		SetTitle(XOR("Misc"));
 
-		buy1.setup(XOR("auto buy items"), XOR("auto_buy1"),
+		buy1.setup(XOR("auto buy"), XOR("auto_buy1"),
 			{
 				XOR("ssg08"),
 				XOR("awp"),
@@ -2199,10 +2183,10 @@ public:
 			}, false);
 		RegisterElement(&buy3);
 
-		notifications.setup(XOR("notifications"), XOR("notifications"), { XOR("matchmaking"), XOR("damage"), XOR("harmed"), XOR("purchases") });
+		notifications.setup(XOR("logs"), XOR("notifications"), { XOR("matchmaking"), XOR("damage"), XOR("harmed"), XOR("purchases") });
 		RegisterElement(&notifications);
 
-		last_tick_defuse.setup(XOR("last tick defuse"), XOR("last_tick_defuse"));
+		last_tick_defuse.setup(XOR("last second defuse"), XOR("last_tick_defuse"));
 		RegisterElement(&last_tick_defuse);
 
 		fake_latency.setup(XOR("fake latency"), XOR("fake_latency"));
@@ -2220,7 +2204,7 @@ public:
 		skybox.AddShowCallback(callbacks::IsSkyBoxChange);
 		RegisterElement(&skybox, 1);
 
-		autoaccept.setup(XOR("auto-accept matchmaking"), XOR("autoaccept"));
+		autoaccept.setup(XOR("auto-accept"), XOR("autoaccept"));
 		RegisterElement(&autoaccept, 0);
 
 		unlock.setup(XOR("unlock inventory in-game"), XOR("unlock_inventory"));
@@ -2239,7 +2223,7 @@ public:
 		killfeed.SetCallback(callbacks::ToggleKillfeed);
 		RegisterElement(&killfeed, 1);
 
-		clantag.setup(XOR("clantag"), XOR("clantag"));
+		clantag.setup(XOR("clantag changer"), XOR("clantag"));
 		RegisterElement(&clantag, 1);
 
 	/*	clantag2.setup(XOR("clantag2"), XOR("clantag2"));
@@ -2261,7 +2245,7 @@ public:
 		//fov_scoped.AddShowCallback(callbacks::FOVOverride);
 		//RegisterElement(&fov_scoped, 1);
 
-		viewmodel_override.setup(XOR("override viewmodel"), XOR("viewmodel_override"));
+		viewmodel_override.setup(XOR("viewmodel fov"), XOR("viewmodel_override"));
 		RegisterElement(&viewmodel_override, 1);
 
 		viewmodel_fov.setup(XOR("viewmodel fov"), XOR("viewmodel_fov"), 60.f, 140.f, true, 0, 90.f, 1.f, XOR(L"°"));
@@ -2304,6 +2288,7 @@ public:
 
 	Dropdown mode;
 	Dropdown config;
+	Keybind menu_key;
 	Keybind  key1;
 	Keybind  key2;
 	Keybind  key3;
@@ -2316,10 +2301,11 @@ public:
 public:
 
 	void init() {
-		SetTitle(XOR("config"));
+		SetTitle(XOR("Config"));
 
-		menu_color.setup(XOR("menu color"), XOR("menu_color"), colors::burgundy, &g_gui.m_color);
-		RegisterElement(&menu_color);
+		menu_key.setup(XOR("menu key"), XOR("menu_key"));
+		menu_key.SetToggleCallback(callbacks::menu_key);
+		RegisterElement(&menu_key, 1);
 
 		mode.setup(XOR("safety mode"), XOR("mode"), { XOR("matchmaking"), XOR("no-spread") });
 		RegisterElement(&mode, 1);

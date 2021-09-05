@@ -359,7 +359,7 @@ void Visuals::Spectators() {
 		const std::string& name = spectators[i];
 
 		render::menu_shade.string(g_cl.m_width - 20, (g_cl.m_height / 2) - (total_size / 2) + (i * (h - 1)),
-			{ 255, 255, 255, 179 }, name, render::ALIGN_RIGHT);
+			{ 255, 255, 255, 18079 }, name, render::ALIGN_RIGHT);
 	}
 }
 
@@ -376,7 +376,7 @@ void Visuals::StatusIndicators() {
 	std::vector< Indicator_t > indicators{ };
 
 	// LC
-	if (g_menu.main.visuals.indicators.get(1)) {
+	if (g_menu.main.visuals.indicators.get(5)) {
 		if (g_cl.m_local->m_vecVelocity().length_2d() > 270.f || g_cl.m_lagcomp) {
 			Indicator_t ind{ };
 			ind.color = g_cl.m_lagcomp ? 0xff15c27b : 0xff0000ff;
@@ -385,14 +385,17 @@ void Visuals::StatusIndicators() {
 			indicators.push_back(ind);
 		}
 	}
+
 	// DT
 	if (g_menu.main.visuals.indicators.get(1)) {
+		if (g_cl.m_charged) {
 		Indicator_t ind{ };
-		ind.color = g_aimbot.m_double_tap ? 0xff15c27b : 0xff0000ff;
+		ind.color = g_aimbot.m_double_tap ? 0xfffffff : 0xff0000ff;
 		ind.text = XOR("DT");
-
 		indicators.push_back(ind);
+		}
 	}
+
 
 	// LBY
 	if (g_menu.main.visuals.indicators.get(0)) {
@@ -405,8 +408,9 @@ void Visuals::StatusIndicators() {
 		indicators.push_back(ind);
 	}
 
+
 	// PING
-	if (g_menu.main.visuals.indicators.get(2)) {
+	if (g_menu.main.visuals.indicators.get(3)) {
 		Indicator_t ind{ };
 		ind.color = g_aimbot.m_fake_latency ? 0xff15c27b : 0xff0000ff;
 		ind.text = XOR("PING");
@@ -430,7 +434,7 @@ void Visuals::StatusIndicators() {
 	for (size_t i{ }; i < indicators.size(); ++i) {
 		auto& indicator = indicators[i];
 
-		render::indicator.string(12, g_cl.m_height - 450 - (30 * i), indicator.color, indicator.text);
+		render::indicator.string(12, g_cl.m_height - 64 - (30 * i), indicator.color, indicator.text);
 	}
 }
 
