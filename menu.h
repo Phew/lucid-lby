@@ -247,7 +247,7 @@ public:
 
 public:
 	void init() {
-		SetTitle(XOR("Anti-Aim"));
+		SetTitle(XOR("AntiAim"));
 
 		enable.setup(XOR("enable"), XOR("enable"));
 		RegisterElement(&enable);
@@ -875,7 +875,7 @@ public:
 		viewmodel_fov_amt.setup("", XOR("viewmodel_fov_amt"), 60.f, 140.f, false, 0, 90.f, 1.f, XOR(L"°"));
 		RegisterElement(&viewmodel_fov_amt, 1);
 
-		spectators.setup(XOR("show spectator list"), XOR("spectators"));
+		spectators.setup(XOR(" spectator list"), XOR("spectators"));
 		RegisterElement(&spectators, 1);
 
 		force_xhair.setup(XOR("force crosshair"), XOR("force_xhair"));

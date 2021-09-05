@@ -47,7 +47,7 @@ void GUI::think() {
 	// sort forms based on last touched tick.
 	std::sort(m_forms.begin(), m_forms.end(), [](Form* a, Form* b) {
 		return a->m_tick > b->m_tick;
-		});
+	});
 
 	// update form open states
 	// iterage forms.
@@ -142,7 +142,7 @@ void GUI::think() {
 	// re-sort forms based on last touched tick.
 	std::sort(m_forms.begin(), m_forms.end(), [](Form* a, Form* b) {
 		return a->m_tick > b->m_tick;
-		});
+	});
 
 	// iterate forms.
 	for (const auto& f : m_forms) {
@@ -277,7 +277,7 @@ void GUI::draw() {
 	// sort forms based on last touched tick ( in reverse ).
 	std::sort(m_forms.begin(), m_forms.end(), [](Form* a, Form* b) {
 		return a->m_tick < b->m_tick;
-		});
+	});
 
 	// iterate forms.
 	for (const auto& f : m_forms) {
