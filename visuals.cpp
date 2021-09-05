@@ -327,7 +327,7 @@ void Visuals::Spectators() {
 		return;
 
 	std::vector< std::string > spectators{ XOR("") };
-	int h = render::menu_shade.m_size.m_height;
+	int h = render::spec.m_size.m_height;
 
 	for (int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i) {
 		Player* player = g_csgo.m_entlist->GetClientEntity< Player* >(i);
@@ -370,7 +370,7 @@ void Visuals::StatusIndicators() {
 		return;
 
 	// compute hud size.
-	int size = ( int )std::round( ( g_cl.m_height / 17.5f ) * g_csgo.hud_scaling->GetFloat( ) );
+	int size = (int)std::round((g_cl.m_height / 17.5f) * g_csgo.hud_scaling->GetFloat());
 
 	struct Indicator_t { Color color; std::string text; };
 	std::vector< Indicator_t > indicators{ };
@@ -389,10 +389,10 @@ void Visuals::StatusIndicators() {
 	// DT
 	if (g_menu.main.visuals.indicators.get(1)) {
 		if (g_cl.m_charged) {
-		Indicator_t ind{ };
-		ind.color = g_aimbot.m_double_tap ? 0xfffffff : 0xff0000ff;
-		ind.text = XOR("DT");
-		indicators.push_back(ind);
+			Indicator_t ind{ };
+			ind.color = g_aimbot.m_double_tap ? 0xffffffff : 0xff0000ff;
+			ind.text = XOR("DT");
+			indicators.push_back(ind);
 		}
 	}
 
@@ -417,7 +417,7 @@ void Visuals::StatusIndicators() {
 
 		indicators.push_back(ind);
 	}
-	
+
 	// MIN DMG OVERRIDE
 	if (g_menu.main.visuals.indicators.get(2)) {
 		Indicator_t ind{ };

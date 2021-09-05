@@ -3,6 +3,7 @@
 #include <math.h>       /* round, floor, ceil, trunc */
 
 namespace render {
+	Font spec;;
 	Font menu;;
 	Font menu_shade;;
 	Font esp;;
@@ -18,8 +19,9 @@ namespace render {
 }
 
 void render::init() {
-	menu = Font(XOR("Verdana"), 12, FW_NORMAL, FONTFLAG_NONE);
-	menu_shade = Font(XOR("Verdana"), 12, FW_NORMAL, FONTFLAG_DROPSHADOW);
+	spec = Font(XOR("Lucida Console"), 10, FW_DONTCARE, FONTFLAG_DROPSHADOW);
+	menu = Font(XOR("Cascadia Mono SemiLight"), 14, FW_NORMAL, FONTFLAG_ANTIALIAS | FONTFLAG_NONE);
+	menu_shade = Font(XOR("Cascadia Mono SemiLight"), 14, FW_NORMAL, FONTFLAG_ANTIALIAS | FONTFLAG_DROPSHADOW);
 	menu_icon = Font(XOR("menu_font"), 50, FW_NORMAL, FONTFLAG_ANTIALIAS | FONTFLAG_OUTLINE);
 	newmenu_icon = Font(XOR("Heydings Icons"), 50, FW_NORMAL, FONTFLAG_ANTIALIAS | FONTFLAG_OUTLINE);
 	esp = Font(XOR("Tahoma"), 12, FW_NORMAL, FONTFLAG_DROPSHADOW); 

@@ -52,6 +52,7 @@ namespace render {
 		FontSize_t wsize(const std::wstring& text);
 	};
 
+	extern Font spec;;
 	extern Font menu;
 	extern Font menu_shade;
 	extern Font esp;
