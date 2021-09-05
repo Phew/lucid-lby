@@ -37,7 +37,7 @@ void Keybind::draw() {
 	color.a() = m_parent->m_alpha;
 
 	// draw label.
-	render::menu.string(p.x + KEYBIND_X_OFFSET, p.y - 2, { 200, 202, 237, 180 }, m_label);
+	render::menu.string(p.x + KEYBIND_X_OFFSET, p.y - 2, { 255, 255, 255, 180 }, m_label);
 
 	// box outline.
 	render::rect(p.x + KEYBIND_X_OFFSET, p.y + 15, m_w - KEYBIND_X_OFFSET, KEYBIND_BOX_HEIGHT, { 0, 0, 0, m_parent->m_alpha });
@@ -48,7 +48,7 @@ void Keybind::draw() {
 
 	// todo; animate with '...'
 	if (m_set)
-		render::menu.string(p.x + KEYBIND_X_OFFSET + KEYBIND_ITEM_X_OFFSET, p.y + 15 + 4, color, XOR("press key"));
+		render::menu.string(p.x + KEYBIND_X_OFFSET + KEYBIND_ITEM_X_OFFSET, p.y + 15 + 4, color, XOR("enter keybind"));
 
 	// we have a key assigned.
 	else if (m_key >= 0 && m_key <= 0xFE)

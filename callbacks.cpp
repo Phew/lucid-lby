@@ -99,18 +99,6 @@ void callbacks::HiddenCvar() {
 	g_cl.UnlockHiddenConvars();
 }
 
-void callbacks::ToggleLeftSide() {
-	g_hvh.angle_side = 1;
-}
-
-void callbacks::ToggleRightSide() {
-	g_hvh.angle_side = 2;
-}
-
-void callbacks::ToggleBackSide() {
-	g_hvh.angle_side = 3;
-}
-
 
 bool callbacks::IsBaimHealth() {
 	return g_menu.main.aimbot.baim2.get(1);
@@ -609,6 +597,10 @@ void callbacks::ToggleDMG() {
 
 void callbacks::ToggleDT() {
 	g_aimbot.m_double_tap = !g_aimbot.m_double_tap;
+}
+
+void callbacks::menu_key() {
+	g_gui.m_open = true;
 }
 
 bool callbacks::AUTO_STOP() {

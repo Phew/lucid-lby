@@ -1,13 +1,11 @@
 #include "includes.h"
 
-#define shift_ticks 14
-
 Aimbot g_aimbot{ };;
 
+#define shift_ticks 16
 
 bool CanFireWithExploit(int m_iShiftedTick)
 {
-	// curtime before shift
 	float curtime = game::TICKS_TO_TIME(g_cl.m_local->m_nTickBase() - m_iShiftedTick);
 	return g_cl.CanFireWeapon(curtime);
 }
@@ -20,13 +18,14 @@ bool Aimbot::CanDT() {
 
 void Aimbot::DoubleTap()
 {
+
 	static bool did_shift_before = false;
 	static bool reset = true;
 	static int clock = 0;
 	auto ticks_to_shift = shift_ticks;
 	g_cl.can_dt_shoot = false;
 
-	if (CanDT() && !g_csgo.m_gamerules->m_bFreezePeriod())
+	if (CanDT() && !g_csgo.m_gamerules->m_bFreezePeriod());
 	{
 		if (m_double_tap)
 		{
@@ -37,12 +36,7 @@ void Aimbot::DoubleTap()
 
 				clock++;
 
-				// if this sucks for you when peeking then limit shift ticks to 11. we dont need to compensate lag comp issues. this can also be turned into a checkbox if you want to.
-
-				// if ( menu bool )
-				// ticks_to_shift = std::clamp(ticks_to_shift, 0, 11);
-
-				if (clock >= 40) // make this thing higher if you want to delay the recharge more.
+				if (clock >= 40)
 				{
 					g_cl.m_tick_to_recharge = ticks_to_shift;
 					g_cl.can_recharge = true;
@@ -50,6 +44,7 @@ void Aimbot::DoubleTap()
 					clock = 0;
 					reset = false;
 				}
+
 			}
 			else
 			{
@@ -132,9 +127,9 @@ void AimPlayer::UpdateAnimations(LagRecord* record) {
 		// detect fakewalk.
 		float speed = record->m_velocity.length();
 
-		if (record->m_flags & FL_ONGROUND && record->m_layers[6].m_weight == 0.f && record->m_layers[6].m_playback_rate < 0.0001 && speed > 2.f) {
+		if (record->m_flags & FL_ONGROUND && record->m_layers[6].m_weight == 0.f && speed > 0.1f && speed < 100.f)
 			record->m_fake_walk = true;
-		}
+
 		if (record->m_fake_walk)
 			record->m_anim_velocity = record->m_velocity = { 0.f, 0.f, 0.f };
 
@@ -469,18 +464,10 @@ void AimPlayer::SetupHitboxes(LagRecord* record, bool history) {
 		m_hitboxes.push_back({ HITBOX_BODY, HitscanMode::PREFER });
 	}
 
-	// only, on key.
-
 	if (g_aimbot.m_baim_toggle) {
 		only = true;
 		m_hitboxes.push_back({ HITBOX_BODY, HitscanMode::PREFER });
 	}
-
-
-	/*if (g_input.GetKeyState(g_menu.main.aimbot.baim_key.get())) {
-		only = true;
-		m_hitboxes.push_back({ HITBOX_BODY, HitscanMode::PREFER });
-	}*/
 
 	// only baim conditions have been met.
 	// do not insert more hitboxes.
@@ -731,8 +718,6 @@ void Aimbot::find() {
 		// set autostop shit.
 		m_stop = !(g_cl.m_buttons & IN_JUMP);
 
-		bool can_hit_on_fd = !g_hvh.m_fakeduck || g_hvh.m_fakeduck && g_cl.m_local->m_flDuckAmount() == 0.f;
-
 		bool on = g_menu.main.aimbot.hitchance.get() && g_menu.main.config.mode.get() == 0;
 		bool hit = on && CheckHitchance(m_target, m_angle);
 
@@ -763,6 +748,86 @@ void Aimbot::find() {
 				g_cl.m_cmd->m_buttons |= IN_ATTACK;
 		}
 	}
+}
+
+bool Aimbot::CanHit(vec3_t start, vec3_t end, LagRecord* record, int box, bool in_shot, BoneArray* bones)
+{
+	if (!record || !record->m_player)
+		return false;
+
+	// backup player
+	const auto backup_origin = record->m_player->m_vecOrigin();
+	const auto backup_abs_origin = record->m_player->GetAbsOrigin();
+	const auto backup_abs_angles = record->m_player->GetAbsAngles();
+	const auto backup_obb_mins = record->m_player->m_vecMins();
+	const auto backup_obb_maxs = record->m_player->m_vecMaxs();
+	const auto backup_cache = record->m_player->m_iBoneCache();
+
+	// always try to use our aimbot matrix first.
+	auto matrix = record->m_bones;
+
+	// this is basically for using a custom matrix.
+	if (in_shot)
+		matrix = bones;
+
+	if (!matrix)
+		return false;
+
+	const model_t* model = record->m_player->GetModel();
+	if (!model)
+		return false;
+
+	studiohdr_t* hdr = g_csgo.m_model_info->GetStudioModel(model);
+	if (!hdr)
+		return false;
+
+	mstudiohitboxset_t* set = hdr->GetHitboxSet(record->m_player->m_nHitboxSet());
+	if (!set)
+		return false;
+
+	mstudiobbox_t* bbox = set->GetHitbox(box);
+	if (!bbox)
+		return false;
+
+	vec3_t min, max;
+	const auto IsCapsule = bbox->m_radius != -1.f;
+
+	if (IsCapsule) {
+		math::VectorTransform(bbox->m_mins, matrix[bbox->m_bone], min);
+		math::VectorTransform(bbox->m_maxs, matrix[bbox->m_bone], max);
+		const auto dist = math::SegmentToSegment(start, end, min, max);
+
+		if (dist < bbox->m_radius) {
+			return true;
+		}
+	}
+	else {
+		CGameTrace tr;
+
+		// setup trace data
+		record->m_player->m_vecOrigin() = record->m_origin;
+		record->m_player->SetAbsOrigin(record->m_origin);
+		record->m_player->SetAbsAngles(record->m_abs_ang);
+		record->m_player->m_vecMins() = record->m_mins;
+		record->m_player->m_vecMaxs() = record->m_maxs;
+		record->m_player->m_iBoneCache() = reinterpret_cast<matrix3x4_t**>(matrix);
+
+		// setup ray and trace.
+		g_csgo.m_engine_trace->ClipRayToEntity(Ray(start, end), MASK_SHOT, record->m_player, &tr);
+
+		record->m_player->m_vecOrigin() = backup_origin;
+		record->m_player->SetAbsOrigin(backup_abs_origin);
+		record->m_player->SetAbsAngles(backup_abs_angles);
+		record->m_player->m_vecMins() = backup_obb_mins;
+		record->m_player->m_vecMaxs() = backup_obb_maxs;
+		record->m_player->m_iBoneCache() = backup_cache;
+
+		// check if we hit a valid player / hitgroup on the player and increment total hits.
+		if (tr.m_entity == record->m_player && game::IsValidHitgroup(tr.m_hitgroup))
+			return true;
+	}
+
+	return false;
 }
 
 bool Aimbot::CheckHitchance(Player* player, const ang_t& angle) {
@@ -835,7 +900,7 @@ bool AimPlayer::SetupHitboxPoints(LagRecord* record, BoneArray* bones, int index
 	float scale = g_menu.main.aimbot.scale.get() / 100.f;
 
 	// big inair fix.
-	if (!(record->m_pred_flags) & FL_ONGROUND)
+	if (!(record->m_pred_flags & FL_ONGROUND))
 		scale = 0.7f;
 
 	float bscale = g_menu.main.aimbot.body_scale.get() / 100.f;
@@ -1020,24 +1085,23 @@ bool AimPlayer::GetBestAimPosition(vec3_t& aim, float& damage, LagRecord* record
 	}
 
 	else {
-		if (g_aimbot.m_damage_toggle) {
-			dmg = g_menu.main.aimbot.override_dmg_value.get();
-			pendmg = g_menu.main.aimbot.override_dmg_value.get();
-			pen = g_menu.main.aimbot.override_dmg_value.get();
-		}
-		else {
-			dmg = g_menu.main.aimbot.minimal_damage.get();
-			if (g_menu.main.aimbot.minimal_damage_hp.get())
-				dmg = std::ceil((dmg / 100.f) * hp);
-
-			pendmg = g_menu.main.aimbot.penetrate_minimal_damage.get();
-			if (g_menu.main.aimbot.penetrate_minimal_damage_hp.get())
-				pendmg = std::ceil((pendmg / 100.f) * hp);
-
-			pen = g_menu.main.aimbot.penetrate.get();
-		}
+	if (g_aimbot.m_damage_toggle) {
+		dmg = g_menu.main.aimbot.override_dmg_value.get();
+		pendmg = g_menu.main.aimbot.override_dmg_value.get();
+		pen = g_menu.main.aimbot.override_dmg_value.get();
 	}
+	else {
+		dmg = g_menu.main.aimbot.minimal_damage.get();
+		if (g_menu.main.aimbot.minimal_damage_hp.get())
+			dmg = std::ceil((dmg / 100.f) * hp);
 
+		pendmg = g_menu.main.aimbot.penetrate_minimal_damage.get();
+		if (g_menu.main.aimbot.penetrate_minimal_damage_hp.get())
+			pendmg = std::ceil((pendmg / 100.f) * hp);
+
+		pen = g_menu.main.aimbot.penetrate.get();
+	}
+	}
 
 	// write all data of this record l0l.
 	record->cache();
@@ -1221,8 +1285,7 @@ void Aimbot::apply() {
 	// ensure we're attacking.
 	if (attack || attack2) {
 		// choke every shot.
-		if (!g_hvh.m_fakeduck)
-			*g_cl.m_packet = true;
+		*g_cl.m_packet = false;
 
 		if (m_target) {
 			// make sure to aim at un-interpolated data.
@@ -1237,7 +1300,8 @@ void Aimbot::apply() {
 			if (!g_menu.main.aimbot.silent.get())
 				g_csgo.m_engine->SetViewAngles(m_angle);
 
-			g_visuals.DrawHitboxMatrix(m_record, colors::white, 10.f);
+			if (g_menu.main.aimbot.debugaim.get())
+				g_visuals.DrawHitboxMatrix(m_record, colors::white, 10.f);
 		}
 
 		// nospread.
@@ -1249,7 +1313,7 @@ void Aimbot::apply() {
 			g_cl.m_cmd->m_view_angles -= g_cl.m_local->m_aimPunchAngle() * g_csgo.weapon_recoil_scale->GetFloat();
 
 		// store fired shot.
-		g_shots.OnShotFire(m_target ? m_target : nullptr, m_target ? m_damage : -1.f, g_cl.m_weapon_info->m_bullets, m_target ? m_record : nullptr);
+		g_shots.OnShotFire(m_target ? m_target : nullptr, m_target ? m_damage : -1.f, g_cl.m_weapon_info->m_bullets, m_target ? m_record : nullptr, m_hitbox);
 
 		// set that we fired.
 		g_cl.m_shot = true;

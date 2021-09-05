@@ -57,7 +57,6 @@ public:
 	int m_stand_index2;
 	int m_stand_index3;
 	int m_last_move;
-	int m_moving_index;
 	int m_unknown_move;
 	int m_body_index;
 
@@ -135,19 +134,17 @@ public:
 	ang_t      m_angle;
 	vec3_t     m_aim;
 	float      m_damage;
+	float      m_hitbox;
 	LagRecord* m_record;
+	bool    m_double_tap;
+	bool	m_baim_toggle;
+	bool	m_damage_toggle;
 
 	// fake latency stuff.
 	bool       m_fake_latency;
 	bool can_hit;
 
 	bool m_stop;
-
-	//idk
-
-	bool	m_baim_toggle;
-	bool	m_damage_toggle;
-	bool    m_double_tap;
 
 public:
 	__forceinline void reset() {
@@ -185,6 +182,7 @@ public:
 	void StripAttack();
 	void think();
 	void find();
+	bool CanHit(vec3_t start, vec3_t end, LagRecord* record, int box, bool in_shot, BoneArray* bones);
 	bool CheckHitchance(Player* player, const ang_t& angle);
 	bool SelectTarget(LagRecord* record, const vec3_t& aim, float damage);
 	void apply();

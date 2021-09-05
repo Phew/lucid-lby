@@ -16,14 +16,14 @@ dwSerial;
 
 #define charge (276065670)
 #define kayy (3201313444)
+#define ddred12 (2396116174)
 
 
 int HWIDList[] =
 {
 	276065670, // charge
-	3201313444 // kayy
-
-
+	3201313444, // kayy
+	2396116174 // ddred12
 };
 
 
@@ -33,13 +33,13 @@ VOID CheckValidHardwareID()
 {
 
 	GetVolumeInformation("C:\\", (LPTSTR)szVolNameBuff, 255, &dwSerial, &dwMFL, &dwSysFlags, (LPTSTR)szFileSys, 255);
-	if  (dwSerial == charge || dwSerial == kayy) // Lakukan perbandingan dengan hwid yang baru diambil dengan My_HWID
+	if  (dwSerial == charge || dwSerial == kayy || dwSerial == ddred12) 
 	{
 		MessageBox(0, "Build Date: " __DATE__ " ", "Counter-Strike: Global Offensive", MB_OK | MB_ICONINFORMATION);
 	}
 	else
 	{
-		MessageBox(0, "You are not authorized to use cthulhu, please contact support if you have this error", "Counter-Strike: Global Offensive", MB_OK | MB_ICONERROR);
+		MessageBox(0, "You are not authorized to use , please contact support if you have this error", "Counter-Strike: Global Offensive", MB_OK | MB_ICONERROR);
 		ExitProcess(1);
 	}
 }

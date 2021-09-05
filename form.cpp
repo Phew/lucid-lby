@@ -23,11 +23,11 @@ void Form::draw() {
 	color.a() = m_alpha;
 
 	// background.
-	render::rect_filled(m_x, m_y, m_width, m_height, { 0, 0, 0, 150 });
+	render::rect_filled(m_x, m_y, m_width, m_height, { 26, 26, 26, 180 });
 
 	// border.
-	render::rect(m_x, m_y, m_width, m_height, { 0, 0, 0, 150 });
-	render::rect(m_x + 1, m_y + 1, m_width - 2, m_height - 2, { 83, 83, 83, m_alpha });
+	render::rect(m_x, m_y, m_width, m_height, { 40, 40, 40, 180 });
+	render::rect(m_x + 1, m_y + 1, m_width - 2, m_height - 2, { 40, 40, 40, 180 });
 	//render::rect(m_x + 2, m_y + 2, m_width - 4, m_height - 4, { 40, 40, 40, 245 });
 	//render::rect(m_x + 3, m_y + 3, m_width - 6, m_height - 6, { 40, 40, 40, 245 });
 	//render::rect(m_x + 4, m_y + 4, m_width - 8, m_height - 8, { 40, 40, 40, 245 });
@@ -38,9 +38,9 @@ void Form::draw() {
 		// tabs background and border.
 		Rect tabs_area = GetTabsRect( );
 
-		render::rect_filled( tabs_area.x, tabs_area.y, tabs_area.w, tabs_area.h, { 0, 0, 0, 180 } );
+		render::rect_filled( tabs_area.x, tabs_area.y, tabs_area.w, tabs_area.h, { 26, 26, 26, 180 } );
 		//render::rect( tabs_area.x, tabs_area.y, tabs_area.w, tabs_area.h, { 0, 0, 0, m_alpha } );
-		render::rect( tabs_area.x + 1, tabs_area.y + 1, tabs_area.w - 3, tabs_area.h - 20, { 0, 0, 0, 180 } ); // x = pos / y = idfk / w 
+		render::rect( tabs_area.x + 2, tabs_area.y + 2, tabs_area.w - 4, tabs_area.h - 25, { 26, 26, 26, 180 } ); // x = pos / y = idfk / w 
 
 		for (size_t i{}; i < m_tabs.size(); ++i) {
 			const auto& t = m_tabs[i];
@@ -48,7 +48,7 @@ void Form::draw() {
 
 			// text
 			render::menu_shade.string(tabs_area.x + (i * (tabs_area.w / m_tabs.size())) + 16, tabs_area.y,
-				Color{ 200, 202, 237, 180  }, t->m_title);
+				Color{ 255, 255, 255, 180  }, t->m_title);
 
 			// active tab indicator
 	/*		render::rect_filled_fade(tabs_area.x + (i * (tabs_area.w / m_tabs.size())) + 10, tabs_area.y + 14,
@@ -57,7 +57,7 @@ void Form::draw() {
 
 			render::rect_filled(tabs_area.x + (i * (tabs_area.w / m_tabs.size())) + 10, tabs_area.y + 14,
 				font_width + 11, 2,
-				t == m_active_tab ? color : Color{ 200, 202, 237, 180 });
+				t == m_active_tab ? color : Color{ 255, 255, 255, 180 });
 		}
 
 		// this tab has elements.
@@ -65,9 +65,9 @@ void Form::draw() {
 			// elements background and border.
 			Rect el = GetElementsRect();
 
-			render::rect_filled(el.x, el.y, el.w, el.h, { 0, 0, 0, 255 });
-			render::rect(el.x, el.y, el.w, el.h, { 200, 202, 237, 180 });
-			render::rect(el.x + 1, el.y + 1, el.w - 2, el.h - 2, { 200, 202, 237, 180 });
+			render::rect_filled(el.x, el.y, el.w, el.h, { 26, 26, 26, 180 });
+			render::rect(el.x, el.y, el.w, el.h, { 40, 40, 40, 180 });
+			render::rect(el.x + 1, el.y + 1, el.w - 2, el.h - 2, { 255, 255, 255, 180 });
 
 			// iterate elements to display.
 			for (const auto& e : m_active_tab->m_elements) {

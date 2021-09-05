@@ -1,6 +1,9 @@
 #pragma once
 
 namespace callbacks {
+	// menu key
+	void menu_key();
+
 	void SkinUpdate();
 	void ForceFullUpdate();
 	void ToggleThirdPerson();
@@ -16,9 +19,6 @@ namespace callbacks {
 	void ConfigLoad();
 	void HiddenCvar();
 	void ConfigSave();
-	void ToggleLeftSide();
-	void ToggleRightSide();
-	void ToggleBackSide();
 	bool ViewFOVOverride();
 	bool FOVOverride();
 

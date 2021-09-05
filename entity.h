@@ -582,7 +582,10 @@ public:
 		// .text:1037A5CE 00C     74 3E                  jz      short loc_1037A60E; Jump if Zero( ZF = 1 )
 		return get< CCSGOPlayerAnimState * >(g_csgo.PlayerAnimState);
 	}
-
+	__forceinline matrix3x4_t**& m_iBoneCache() {
+		// TODO; sig
+		return get< matrix3x4_t** >(g_entoffsets.m_BoneCache);
+	}
 	__forceinline CStudioHdr *m_studioHdr() {
 		// .text:1017E902 08C    8B 86 3C 29 00 00    mov     eax, [ esi + 293Ch ]
 		// .text:1017E908 08C    89 44 24 10          mov[ esp + 88h + var_78 ], eax

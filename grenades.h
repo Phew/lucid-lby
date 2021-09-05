@@ -13,7 +13,7 @@ private:
 		Color  color;
 	};
 
-	using path_t    = std::vector< vec3_t >;
+	using path_t = std::vector< vec3_t >;
 	using bounces_t = std::vector< bounce_t >;
 
 private:
@@ -24,18 +24,18 @@ private:
 	vec3_t    m_start, m_velocity, m_move;
 
 public:
-	void   reset( );
-	void   paint( );
-	void   think( );
-	void   simulate( );
-	void   setup( );
-	size_t advance( size_t tick );
-	bool   detonate( size_t tick, CGameTrace& trace );
-	void   ResolveFlyCollisionBounce( CGameTrace& trace );
-	void   PhysicsPushEntity( vec3_t& start, const vec3_t& move, CGameTrace& trace, Entity* ent );
-	void   TraceHull( const vec3_t& start, const vec3_t& end, CGameTrace& trace, Entity* ent );
-	void   PhysicsAddGravityMove( vec3_t& move );
-	void   PhysicsClipVelocity( const vec3_t& in, const vec3_t& normal, vec3_t& out, float overbounce );
+	void   reset();
+	void   paint();
+	void   think();
+	void   simulate();
+	void   setup();
+	size_t advance(size_t tick);
+	bool   detonate(size_t tick, CGameTrace& trace);
+	void   ResolveFlyCollisionBounce(CGameTrace& trace);
+	void   PhysicsPushEntity(vec3_t& start, const vec3_t& move, CGameTrace& trace, Entity* ent);
+	void   TraceHull(const vec3_t& start, const vec3_t& end, CGameTrace& trace, Entity* ent);
+	void   PhysicsAddGravityMove(vec3_t& move);
+	void   PhysicsClipVelocity(const vec3_t& in, const vec3_t& normal, vec3_t& out, float overbounce);
 };
 
 extern Grenades g_grenades;

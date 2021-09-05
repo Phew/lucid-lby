@@ -3,6 +3,9 @@
 #include <LMCons.h>
 
 Client g_cl{ };
+#define INFO_BUFFER_SIZE 32767
+TCHAR  infoBuf[INFO_BUFFER_SIZE];
+DWORD  bufCharCount = INFO_BUFFER_SIZE;
 
 typedef void(__thiscall* o_proc_movement)(void*, CMoveData*);
 
@@ -12,19 +15,16 @@ char username[33] = "\x90\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x0
 
 // init routine.
 ulong_t __stdcall Client::init(void* arg) {
-	TCHAR username[UNLEN + 1];
-	DWORD size = UNLEN + 1;
-	GetUserName((TCHAR*)username, &size);
+	GetComputerName(infoBuf, &bufCharCount);
 	// if not in interwebz mode, the driver will not set the username.
 	g_cl.m_user = XOR("doxwhere");
 
 	// stop here if we failed to acquire all the data needed from csgo.
 	if (!g_csgo.init())
 		return 0;
-
 	// welcome the user.
-	g_notify.add(tfm::format(XOR("Welcome, %s\n"), username));
-	g_notify.add(tfm::format(XOR("Last updated: 'August 26th, 2021'\n")));
+	g_notify.add(tfm::format(XOR("Welcome, %s\n"), GetComputerName));
+	g_notify.add(tfm::format(XOR("Last updated: '%s'\n"), __DATE__));
 
 	return 1;
 }
@@ -78,7 +78,7 @@ void Client::ClanTag()
 		if (iPrevFrame != int(g_csgo.m_globals->m_curtime * 3.2) % 6) {
 			switch (int(g_csgo.m_globals->m_curtime * 3.2) % 6) {
 			case 0: {  SetClanTag("doxwhere"); break; }
-			case 1: {  SetClanTag("DoxWhere"); break; }
+			case 1: {  SetClanTag("doxwhere"); break; }
 			case 2: {  SetClanTag("d0xwhere"); break; }
 			case 3: {  SetClanTag("doxwh3r3"); break; }
 			case 4: {  SetClanTag("d0xwh3r3"); break; }
@@ -134,7 +134,7 @@ void Client::ClanTag2()
 		if (iPrevFrame != int(g_csgo.m_globals->m_curtime * 2.5) % 14) {
 			switch (int(g_csgo.m_globals->m_curtime * 2.5) % 21) {
 			case 0: {  SetClanTag("doxwhere"); break; }
-			case 1: {  SetClanTag("DoxWhere"); break; }
+			case 1: {  SetClanTag("doxwhere"); break; }
 			case 2: {  SetClanTag("d0xwhere"); break; }
 			case 3: {  SetClanTag("doxwh3r3"); break; }
 			case 4: {  SetClanTag("d0xwh3r3"); break; }
@@ -739,7 +739,7 @@ void Client::print(const std::string text, ...) {
 
 	// print to console.
 	
-	g_csgo.m_cvar->ConsoleColorPrintf(colors::purple, XOR("[doxwhere] "));
+	g_csgo.m_cvar->ConsoleColorPrintf(colors::light_blue, XOR("[doxwhere] "));
 	g_csgo.m_cvar->ConsoleColorPrintf(colors::white, buf.c_str());
 }
 
