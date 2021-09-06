@@ -59,6 +59,8 @@ public:
 	int m_last_move;
 	int m_unknown_move;
 	int m_body_index;
+	int m_air_index;
+	int m_move_index;
 
 
 	// data about the LBY proxy.
