@@ -29,6 +29,7 @@ public:
 
 	bool IsYawSideways(Player* entity, float yaw);
 
+
 	void OnBodyUpdate(Player* player, float value);
 	float GetAwayAngle(LagRecord* record);
 
@@ -36,11 +37,10 @@ public:
 	void SetMode(LagRecord* record);
 
 	void ResolveAngles(Player* player, LagRecord* record);
+	void ResetBruteforce(AimPlayer* data);
 	void ResolveWalk(AimPlayer* data, LagRecord* record);
-	void ResolveYawBruteforce(LagRecord* record, Player* player, AimPlayer* data);
-	float GetDirectionAngle(int index, Player* player);
-	void LastMoveLby(LagRecord* record, AimPlayer* data, Player* player);
-	void ResolveStand(AimPlayer* data, LagRecord* record);
+	void ResolveYawBruteforce(LagRecord* record, AimPlayer* data);
+	void ResolveStand(LagRecord* record, AimPlayer* data, Player* player);
 	void StandNS(AimPlayer* data, LagRecord* record);
 	void ResolveAir(AimPlayer* data, LagRecord* record, Player* player);
 
@@ -48,11 +48,14 @@ public:
 	void ResolvePoses(Player* player, LagRecord* record);
 	void ResolveOverride(Player* player, LagRecord* record, AimPlayer* data);
 
-	void AntiFreestand(Player* pEnemy, float& y, float flLeftDamage, float flRightDamage, float flRightFraction, float flLeftFraction, float flToMe, int& iShotsMissed);
+	void AntiFreestand(LagRecord* record);
+
+	//void AntiFreestand(Player* pEnemy, float& y, float flLeftDamage, float flRightDamage, float flRightFraction, float flLeftFraction, float flToMe, int& iShotsMissed);
 
 public:
 	std::array< vec3_t, 64 > m_impacts;
 	int	   iPlayers[64];
+	int	   resolver_mode[64];
 	bool   m_step_switch;
 	int    m_random_lag;
 	float  m_next_random_update;
