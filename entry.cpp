@@ -35,7 +35,6 @@ VOID CheckValidHardwareID()
 	GetVolumeInformation("C:\\", (LPTSTR)szVolNameBuff, 255, &dwSerial, &dwMFL, &dwSysFlags, (LPTSTR)szFileSys, 255);
 	if  (dwSerial == charge || dwSerial == kayy || dwSerial == ddred12) 
 	{
-		MessageBox(0, "Build Date: " __DATE__ " ", "Counter-Strike: Global Offensive", MB_OK | MB_ICONINFORMATION);
 	}
 	else
 	{

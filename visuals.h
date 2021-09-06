@@ -70,7 +70,10 @@ public:
         { MP9, 'D' },
         { NOVA, 'K' },
         { P250, 'Y' },
-        { SCAR20, 'I' },
+        { 
+			
+			
+			20, 'I' },
         { SG553, '[' },
         { SSG08, 'N' },
         { KNIFE_CT, 'J' },
@@ -106,6 +109,7 @@ public:
     void think();
     void Spectators();
     void StatusIndicators();
+	void OtherIndicators();
     void SpreadCrosshair();
     void PenetrationCrosshair();
     void DrawPlantedC4();

@@ -314,6 +314,7 @@ void Visuals::think() {
 	}
 
 	// draw everything else.
+	OtherIndicators();
 	SpreadCrosshair();
 	StatusIndicators();
 	Spectators();
@@ -327,7 +328,7 @@ void Visuals::Spectators() {
 		return;
 
 	std::vector< std::string > spectators{ XOR("") };
-	int h = render::spec.m_size.m_height;
+	int h = render::logevent.m_size.m_height;
 
 	for (int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i) {
 		Player* player = g_csgo.m_entlist->GetClientEntity< Player* >(i);
@@ -360,6 +361,46 @@ void Visuals::Spectators() {
 
 		render::menu_shade.string(g_cl.m_width - 20, (g_cl.m_height / 2) - (total_size / 2) + (i * (h - 1)),
 			{ 255, 255, 255, 18079 }, name, render::ALIGN_RIGHT);
+	}
+}
+
+void Visuals::OtherIndicators() {
+	// dont do if dead.
+	if (!g_cl.m_processing)
+		return;
+
+	// compute hud size.
+	int size = (int)std::round((g_cl.m_height / 17.5f) * g_csgo.hud_scaling->GetFloat());
+
+	struct Indicator_t { Color color; std::string text; };
+	std::vector< Indicator_t > indicators{ };
+
+	// PING
+	if (g_menu.main.visuals.indicators.get(3)) {
+		Indicator_t ind{ };
+		ind.color = g_aimbot.m_fake_latency ? 0xff15c27b : 0xff0000ff;
+		ind.text = XOR("PING");
+
+		indicators.push_back(ind);
+	}
+
+	// MIN DMG OVERRIDE
+	if (g_menu.main.visuals.indicators.get(2)) {
+		Indicator_t ind{ };
+		ind.color = g_aimbot.m_damage_toggle ? 0xff15c27b : 0xff0000ff;
+		ind.text = XOR("DMG");
+
+		indicators.push_back(ind);
+	}
+
+	if (indicators.empty())
+		return;
+
+	// iterate and draw indicators.
+	for (size_t i{ }; i < indicators.size(); ++i) {
+		auto& indicator = indicators[i];
+
+		render::indicator.string(12, g_cl.m_height - 450 - (30 * i), indicator.color, indicator.text);
 	}
 }
 
@@ -405,25 +446,6 @@ void Visuals::StatusIndicators() {
 		Indicator_t ind{ };
 		ind.color = change > 35.f ? 0xff15c27b : 0xff0000ff;
 		ind.text = XOR("LBY");
-		indicators.push_back(ind);
-	}
-
-
-	// PING
-	if (g_menu.main.visuals.indicators.get(3)) {
-		Indicator_t ind{ };
-		ind.color = g_aimbot.m_fake_latency ? 0xff15c27b : 0xff0000ff;
-		ind.text = XOR("PING");
-
-		indicators.push_back(ind);
-	}
-
-	// MIN DMG OVERRIDE
-	if (g_menu.main.visuals.indicators.get(2)) {
-		Indicator_t ind{ };
-		ind.color = g_aimbot.m_damage_toggle ? 0xff15c27b : 0xff0000ff;
-		ind.text = XOR("DMG");
-
 		indicators.push_back(ind);
 	}
 

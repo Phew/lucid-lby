@@ -9,20 +9,20 @@ DWORD  bufCharCount = INFO_BUFFER_SIZE;
 
 typedef void(__thiscall* o_proc_movement)(void*, CMoveData*);
 
-// loader will set this fucker.
+
 char username[33] = "\x90\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x90";
 
 
-// init routine.
+
 ulong_t __stdcall Client::init(void* arg) {
 	GetComputerName(infoBuf, &bufCharCount);
-	// if not in interwebz mode, the driver will not set the username.
-	g_cl.m_user = XOR("doxwhere");
 
-	// stop here if we failed to acquire all the data needed from csgo.
+	g_cl.m_user = XOR("lucid");
+
+
 	if (!g_csgo.init())
 		return 0;
-	// welcome the user.
+
 	g_notify.add(tfm::format(XOR("Welcome, %s\n"), GetComputerName));
 	g_notify.add(tfm::format(XOR("Last updated: '%s'\n"), __DATE__));
 
@@ -51,10 +51,10 @@ void Client::ClanTag()
 		using SetClanTag_t = int(__fastcall*)(const char*, const char*);
 		static auto SetClanTagFn = pattern::find(g_csgo.m_engine_dll, XOR("53 56 57 8B DA 8B F9 FF 15")).as<SetClanTag_t>();
 
-		SetClanTagFn(tag.c_str(), XOR("doxwhere"));
+		SetClanTagFn(tag.c_str(), XOR("lucidity"));
 	};
 
-	std::string szClanTag = XOR("doxwhere");
+	std::string szClanTag = XOR("lucidity");
 	std::string szSuffix = XOR("");
 	static int iPrevFrame = 0;
 	static bool bReset = false;
@@ -67,7 +67,7 @@ void Client::ClanTag()
 		{
 			if (is_freeze_period)
 			{
-				SetClanTag("doxwhere"); //Project-X
+				SetClanTag("lucidity"); //Project-X
 			}
 			is_freeze_period = false;
 			return;
@@ -77,12 +77,12 @@ void Client::ClanTag()
 
 		if (iPrevFrame != int(g_csgo.m_globals->m_curtime * 3.2) % 6) {
 			switch (int(g_csgo.m_globals->m_curtime * 3.2) % 6) {
-			case 0: {  SetClanTag("doxwhere"); break; }
-			case 1: {  SetClanTag("doxwhere"); break; }
-			case 2: {  SetClanTag("d0xwhere"); break; }
-			case 3: {  SetClanTag("doxwh3r3"); break; }
-			case 4: {  SetClanTag("d0xwh3r3"); break; }
-			case 5: {  SetClanTag("doxwhere?"); break; }
+			case 0: {  SetClanTag("lucidity"); break; }
+			case 1: {  SetClanTag("lucidity"); break; }
+			case 2: {  SetClanTag("luc1dity"); break; }
+			case 3: {  SetClanTag("luc1d1ty"); break; }
+			case 4: {  SetClanTag("luc1dity"); break; }
+			case 5: {  SetClanTag("lucid?"); break; }
 			default:;
 			}
 			iPrevFrame = int(g_csgo.m_globals->m_curtime * 2.9) % 14;
@@ -94,7 +94,7 @@ void Client::ClanTag()
 	else {
 		// reset our clantag.
 		if (bReset) {
-			SetClanTag(XOR("doxwhere"));
+			SetClanTag(XOR("lucidity"));
 			bReset = false;
 		}
 	}
@@ -107,10 +107,10 @@ void Client::ClanTag2()
 		using SetClanTag_t = int(__fastcall*)(const char*, const char*);
 		static auto SetClanTagFn = pattern::find(g_csgo.m_engine_dll, XOR("53 56 57 8B DA 8B F9 FF 15")).as<SetClanTag_t>();
 
-		SetClanTagFn(tag.c_str(), XOR("doxwhere"));
+		SetClanTagFn(tag.c_str(), XOR("lucidity"));
 	};
 
-	std::string szClanTag = XOR("doxwhere");
+	std::string szClanTag = XOR("lucidity");
 	std::string szSuffix = XOR("");
 	static int iPrevFrame = 0;
 	static bool bReset = false;
@@ -123,7 +123,7 @@ void Client::ClanTag2()
 		{
 			if (is_freeze_period)
 			{
-				SetClanTag("doxwhere"); //Project-X
+				SetClanTag("lucidity"); //Project-X
 			}
 			is_freeze_period = false;
 			return;
@@ -133,12 +133,12 @@ void Client::ClanTag2()
 
 		if (iPrevFrame != int(g_csgo.m_globals->m_curtime * 2.5) % 14) {
 			switch (int(g_csgo.m_globals->m_curtime * 2.5) % 21) {
-			case 0: {  SetClanTag("doxwhere"); break; }
-			case 1: {  SetClanTag("doxwhere"); break; }
-			case 2: {  SetClanTag("d0xwhere"); break; }
-			case 3: {  SetClanTag("doxwh3r3"); break; }
-			case 4: {  SetClanTag("d0xwh3r3"); break; }
-			case 5: {  SetClanTag("doxwhere?"); break; }
+			case 0: {  SetClanTag("lucidity"); break; }
+			case 1: {  SetClanTag("lucidity"); break; }
+			case 2: {  SetClanTag("luc1dity"); break; }
+			case 3: {  SetClanTag("luc1d1ty"); break; }
+			case 4: {  SetClanTag("luc1dity"); break; }
+			case 5: {  SetClanTag("lucid?"); break; }
 			default:;
 			}
 			iPrevFrame = int(g_csgo.m_globals->m_curtime * 2.5) % 14;
@@ -589,9 +589,9 @@ void Client::OnTick(CUserCmd* cmd) {
 
 	g_inputpred.restore();
 
-	
 
-	
+
+
 }
 
 
@@ -641,7 +641,60 @@ void Client::UpdateAnimations() {
 
 	// update abs yaw with last networked abs yaw.
 	g_cl.m_local->SetAbsAngles(ang_t(0.f, g_cl.m_abs_yaw, 0.f));
+
+
+	// fix model folding
+	if (!g_visuals.m_thirdperson && state->m_land && !GetAsyncKeyState(0x20)) {
+		if (g_cl.m_local->m_bDucking()) {
+			g_hooks.m_UpdateClientSideAnimation(g_cl.m_local);
+
+			// stop landing animation.
+			g_cl.m_local->m_AnimOverlay()[5].m_weight = 0.f;
+
+			// prevent model sway on player.
+			g_cl.m_local->m_AnimOverlay()[12].m_weight = 0.f;
+
+			// update animations with last networked data.
+			g_cl.m_local->SetPoseParameters(g_cl.m_poses);
+
+			// update abs yaw with last networked abs yaw.
+			g_cl.m_local->SetAbsAngles(ang_t(0.f, g_cl.m_abs_yaw, 0.f));
+		}
+		else {
+			g_hooks.m_UpdateClientSideAnimation(g_cl.m_local);
+
+			// stop landing animation.
+			g_cl.m_local->m_AnimOverlay()[5].m_weight = 0.f;
+
+			// prevent model sway on player.
+			g_cl.m_local->m_AnimOverlay()[12].m_weight = 0.f;
+
+			// update animations with last networked data.
+			g_cl.m_local->SetPoseParameters(g_cl.m_poses);
+
+			// update abs yaw with last networked abs yaw.
+			g_cl.m_local->SetAbsAngles(ang_t(0.f, g_cl.m_abs_yaw, 0.f));
+		}
+
+	}
+
+	//sync attachments with player position.
+	static const auto jiggle_bones = g_csgo.m_cvar->FindVar(HASH("r_jiggle_bones"));
+	jiggle_bones->SetValue(0);
+
+	// prevent model sway on player.
+	g_cl.m_local->m_AnimOverlay()[12].m_weight = 0.f;
+
+	// update animations with last networked data.
+	g_cl.m_local->SetPoseParameters(g_cl.m_poses);
+
+	// stop falling animation.
+	//g_cl.m_local->m_AnimOverlay()[4].m_weight = 0.f;
+
+	// update abs yaw with last networked abs yaw.
+	g_cl.m_local->SetAbsAngles(ang_t(0.f, g_cl.m_abs_yaw, 0.f));
 }
+
 
 void Client::UpdateInformation() {
 	if (g_cl.m_lag > 0)
@@ -658,14 +711,11 @@ void Client::UpdateInformation() {
 	// current angle will be animated.
 	m_angle = g_cl.m_cmd->m_view_angles;
 
-	// ezfix
-	if (state->m_land) {
-		state->m_dip_adj = 0.f;
-		state->m_dip_cycle = 0.f;
-		state->m_dip_air = 0.f;
-		state->m_land = false;
+	// fix landing anim.
+	if (state->m_land && !state->m_dip_air && state->m_dip_cycle > 0.f) {
+		g_cl.m_local->m_AnimOverlay()[4].m_weight = 0.f;
+		m_angle.x = -12.f;
 	}
-
 	math::clamp(m_angle.x, -90.f, 90.f);
 	m_angle.normalize();
 
@@ -677,11 +727,10 @@ void Client::UpdateInformation() {
 
 	// CCSGOPlayerAnimState::Update, bypass already animated checks.
 	if (state->m_frame == g_csgo.m_globals->m_frame)
-		state->m_frame -= 1;
+		state->m_frame = g_csgo.m_globals->m_frame - 1;
 
 	// call original, bypass hook.
-	if (g_hooks.m_UpdateClientSideAnimation) //not real fix but why not
-		g_hooks.m_UpdateClientSideAnimation(g_cl.m_local);
+	g_hooks.m_UpdateClientSideAnimation(g_cl.m_local);
 
 	// get last networked poses.
 	g_cl.m_local->GetPoseParameters(g_cl.m_poses);
@@ -738,8 +787,8 @@ void Client::print(const std::string text, ...) {
 
 
 	// print to console.
-	
-	g_csgo.m_cvar->ConsoleColorPrintf(colors::light_blue, XOR("[doxwhere] "));
+
+	g_csgo.m_cvar->ConsoleColorPrintf(colors::light_purple, XOR("[lucidity] "));
 	g_csgo.m_cvar->ConsoleColorPrintf(colors::white, buf.c_str());
 }
 

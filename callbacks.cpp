@@ -604,7 +604,7 @@ bool callbacks::Ticks2Shift() {
 }
 
 void callbacks::menu_key() {
-	g_gui.m_open = true;
+	g_gui.m_open = !g_gui.m_open;
 }
 
 bool callbacks::AUTO_STOP() {
