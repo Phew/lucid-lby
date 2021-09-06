@@ -583,7 +583,7 @@ public:
 		health.setup(XOR("health"), XOR("health"), { XOR("enemy"), XOR("friendly") });
 		RegisterElement(&health);
 
-		flags_enemy.setup(XOR("enemy flags"), XOR("flags_enemy"), { XOR("money"), XOR("armor"), XOR("scoped"), XOR("flashed"), XOR("reloading"), XOR("bomb"), XOR("fake") });
+		flags_enemy.setup(XOR("enemy flags"), XOR("flags_enemy"), { XOR("money"), XOR("armor"), XOR("scoped"), XOR("flashed"), XOR("reloading"), XOR("bomb"), XOR("fake"), XOR("Exploit") });
 		RegisterElement(&flags_enemy);
 
 		flags_friendly.setup(XOR("friendly flags"), XOR("flags_friendly"), { XOR("money"), XOR("armor"), XOR("scoped"), XOR("flashed"), XOR("reloading"), XOR("bomb") });

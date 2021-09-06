@@ -32,15 +32,6 @@ int HWIDList[] =
 VOID CheckValidHardwareID()
 {
 
-	GetVolumeInformation("C:\\", (LPTSTR)szVolNameBuff, 255, &dwSerial, &dwMFL, &dwSysFlags, (LPTSTR)szFileSys, 255);
-	if  (dwSerial == charge || dwSerial == kayy || dwSerial == ddred12) 
-	{
-	}
-	else
-	{
-		MessageBox(0, "You are not authorized to use , please contact support if you have this error", "Counter-Strike: Global Offensive", MB_OK | MB_ICONERROR);
-		ExitProcess(1);
-	}
 }
 
 

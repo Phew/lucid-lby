@@ -588,10 +588,6 @@ void Client::OnTick(CUserCmd* cmd) {
 	g_aimbot.DoubleTap();
 
 	g_inputpred.restore();
-
-
-
-
 }
 
 
@@ -788,7 +784,7 @@ void Client::print(const std::string text, ...) {
 
 	// print to console.
 
-	g_csgo.m_cvar->ConsoleColorPrintf(colors::light_purple, XOR("[lucidity] "));
+	g_csgo.m_cvar->ConsoleColorPrintf(colors::white, XOR("[lucidity] "));
 	g_csgo.m_cvar->ConsoleColorPrintf(colors::white, buf.c_str());
 }
 

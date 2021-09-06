@@ -174,28 +174,25 @@ void render::sphere(vec3_t origin, float radius, float angle, float scale, Color
 	// compute angle step for input radius and precision.
 	float step = (1.f / radius) + math::deg_to_rad(angle);
 
-	for (float lat{}; lat < (math::pi * scale); lat += step) {
-		// reset.
-		vertices.clear();
+	for (float lat{}; lat < 360; lat += step) {
+		vec3_t point{
+			origin.x + (radius * std::cos(math::deg_to_rad(lat))),
+			origin.y + (radius * std::sin(math::deg_to_rad(lat))),
+			origin.z
+		};
 
-		for (float lon{}; lon < math::pi_2; lon += step) {
-			vec3_t point{
-				origin.x + (radius * std::sin(lat) * std::cos(lon)),
-				origin.y + (radius * std::sin(lat) * std::sin(lon)),
-				origin.z + (radius * std::cos(lat))
-			};
+		vec2_t screen;
+		if (!WorldToScreen(point, screen))
+			return;
 
-			vec2_t screen;
-			if (WorldToScreen(point, screen))
-				vertices.emplace_back(screen);
-		}
-
-		if (vertices.empty())
-			continue;
-
-		g_csgo.m_surface->DrawSetColor(color);
-		g_csgo.m_surface->DrawTexturedPolyLine(vertices.size(), vertices.data());
+		vertices.emplace_back(screen);
 	}
+
+	g_csgo.m_surface->DrawSetColor(Color(color.r(), color.g(), color.b(), 100.f));
+	g_csgo.m_surface->DrawTexturedPolygon(vertices.size(), vertices.data());
+
+	g_csgo.m_surface->DrawSetColor(Color(color.r(), color.g(), color.b(), 255.f));
+	g_csgo.m_surface->DrawTexturedPolyLine(vertices.size(), vertices.data());
 }
 
 Vertex render::RotateVertex(const vec2_t& p, const Vertex& v, float angle) {

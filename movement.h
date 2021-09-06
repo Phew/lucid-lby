@@ -23,6 +23,7 @@ public:
 	void MoonWalk(CUserCmd* cmd);
 	void FixMove(CUserCmd* cmd, const ang_t& old_angles);
 	void AutoPeek();
+	void AutoPeekPaint();
 	void AutoStopFIX();
 	void QuickStop();
 	void FakeWalk();

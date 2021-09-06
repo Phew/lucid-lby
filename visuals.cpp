@@ -319,6 +319,7 @@ void Visuals::think() {
 	StatusIndicators();
 	Spectators();
 	PenetrationCrosshair();
+	g_movement.AutoPeekPaint();
 	Hitmarker();
 	DrawPlantedC4();
 }
@@ -1157,6 +1158,19 @@ void Visuals::DrawPlayer(Player* player) {
 				flags.push_back({ XOR("FAKE"), { 130,130,130, low_alpha } });
 			else
 				flags.push_back({ XOR("FAKE"), { 255,255,255, low_alpha } });
+
+		if (g_menu.main.players.flags_enemy.get(7) && g_visuals.fakeangels && enemy)
+		{
+			int shifted = (player->m_flSimulationTime() / g_csgo.m_globals->m_interval) - g_csgo.m_globals->m_tick_count; //If shifted < 0 then they're shifting BUT this should be called in FrameStageNotify FRAME_NET_UPDATE_END and use oldsim instead of sim
+
+			if (shifted < 0)
+			{
+				if (dormant)
+					flags.push_back({ XOR("EXPLOIT"), { 130,0,0, low_alpha } });
+				else
+					flags.push_back({ XOR("EXPLOIT"), { 255,0,0, low_alpha } });
+			}
+		}
 
 
 		/*¸if (g_aimbot.none)
