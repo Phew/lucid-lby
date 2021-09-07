@@ -7,6 +7,6 @@
 ```bash
 Fake Flick > Fake Flick Fix, Add Fake Flick
 Lag-Walk > Fix direction keys, improve overall
-Resolver > add more checks, imrpove last moving lby and anti-freestand (idk how good no-spread resolver is atm)
+Resolver > add more checks, improve last moving lby and anti-freestand (idk how good no-spread resolver is atm)
 Visuals > Various visual shit
 ```
