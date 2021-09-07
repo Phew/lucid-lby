@@ -16,7 +16,6 @@ bool Aimbot::CanDT() {
 
 void Aimbot::DoubleTap()
 {
-
 	static bool did_shift_before = false;
 	static bool reset = true;
 	static int clock = 0;

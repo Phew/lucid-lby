@@ -377,7 +377,7 @@ void Visuals::OtherIndicators() {
 	std::vector< Indicator_t > indicators{ };
 
 	// PING
-	if (g_menu.main.visuals.indicators.get(3)) {
+	if (g_menu.main.visuals.indicators.get(4)) {
 		Indicator_t ind{ };
 		ind.color = g_aimbot.m_fake_latency ? 0xff15c27b : 0xff0000ff;
 		ind.text = XOR("PING");
@@ -386,7 +386,7 @@ void Visuals::OtherIndicators() {
 	}
 
 	// MIN DMG OVERRIDE
-	if (g_menu.main.visuals.indicators.get(2)) {
+	if (g_menu.main.visuals.indicators.get(3)) {
 		Indicator_t ind{ };
 		ind.color = g_aimbot.m_damage_toggle ? 0xff15c27b : 0xff0000ff;
 		ind.text = XOR("DMG");
@@ -417,27 +417,13 @@ void Visuals::StatusIndicators() {
 	struct Indicator_t { Color color; std::string text; };
 	std::vector< Indicator_t > indicators{ };
 
-	// LC
-	if (g_menu.main.visuals.indicators.get(5)) {
-		if (g_cl.m_local->m_vecVelocity().length_2d() > 270.f || g_cl.m_lagcomp) {
-			Indicator_t ind{ };
-			ind.color = g_cl.m_lagcomp ? 0xff15c27b : 0xff0000ff;
-			ind.text = XOR("LC");
-
-			indicators.push_back(ind);
-		}
-	}
-
-	// DT
 	if (g_menu.main.visuals.indicators.get(1)) {
-		if (g_aimbot.m_double_tap) {
-			Indicator_t ind{ };
-			ind.color = g_cl.m_charged ? 0xffffffff : 0xff0000ff;
-			ind.text = XOR("DT");
-			indicators.push_back(ind);
-		}
+		//Choke
+		Indicator_t ind{ };
+		ind.color = 0xffffffff;
+		ind.text = tfm::format(XOR("CHOKE: %d"), g_cl.m_lag);
+		indicators.push_back(ind);
 	}
-
 
 	// LBY
 	if (g_menu.main.visuals.indicators.get(0)) {
@@ -448,6 +434,27 @@ void Visuals::StatusIndicators() {
 		ind.color = change > 35.f ? 0xff15c27b : 0xff0000ff;
 		ind.text = XOR("LBY");
 		indicators.push_back(ind);
+	}
+
+	// DT
+	if (g_menu.main.visuals.indicators.get(2)) {
+		if (g_aimbot.m_double_tap) {
+			Indicator_t ind{ };
+			ind.color = g_cl.m_charged ? 0xffffffff : 0xff0000ff;
+			ind.text = XOR("DT");
+			indicators.push_back(ind);
+		}
+	}
+
+	// LC
+	if (g_menu.main.visuals.indicators.get(6)) {
+		if (g_cl.m_local->m_vecVelocity().length_2d() > 255.f || g_cl.m_lagcomp) {
+			Indicator_t ind{ };
+			ind.color = g_cl.m_lagcomp ? 0xff15c27b : 0xff0000ff;
+			ind.text = XOR("LC");
+
+			indicators.push_back(ind);
+		}
 	}
 
 	if (indicators.empty())

@@ -9,6 +9,9 @@ LagRecord* Resolver::FindIdealRecord(AimPlayer* data) {
 
 	first_valid = nullptr;
 
+	int best_moving_tick = 0;
+	LagRecord *first_moving = nullptr, *body_update = nullptr;
+
 	// iterate records.
 	for (const auto& it : data->m_records) {
 		if (it->dormant() || it->immune() || !it->valid())
@@ -21,13 +24,24 @@ LagRecord* Resolver::FindIdealRecord(AimPlayer* data) {
 		if (!first_valid)
 			first_valid = current;
 
-		// try to find a record with a shot, lby update, walking or no anti-aim.
-		if (it->m_shot || it->m_mode == Modes::RESOLVE_BODY || it->m_mode == Modes::RESOLVE_WALK || it->m_mode == Modes::RESOLVE_NONE)
-			return current;
+		if (it->m_mode == Modes::RESOLVE_WALK)
+		{
+			if (it->m_tick > best_moving_tick)
+			{
+				first_moving = current;
+				best_moving_tick = it->m_tick;
+			}
+		}
+		else if (it->m_mode == Modes::RESOLVE_BODY)
+			body_update = current;
 	}
 
-	// none found above, return the first valid record if possible.
-	return (first_valid) ? first_valid : nullptr;
+	if (first_moving) //First shoot at moving (ideal af)
+		return first_moving;
+	else if (body_update) //Then shoot at flick (meh)
+		return body_update;
+	else //Then cope with standing or some shit
+		return (first_valid) ? first_valid : nullptr;
 }
 
 LagRecord* Resolver::FindLastRecord(AimPlayer* data) {

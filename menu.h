@@ -241,7 +241,8 @@ public:
 	MultiDropdown lag_active;
 	Dropdown      lag_mode;
 	Slider        lag_limit;
-	Checkbox      lag_land;
+	MultiDropdown lag_spike_active;
+	Slider        lag_spike_limit;
 	Keybind  disablefakelagonkey;
 
 	Keybind left_side;
@@ -485,17 +486,20 @@ public:
 		lag_enable.setup(XOR("fake-lag"), XOR("lag_enable"));
 		RegisterElement(&lag_enable, 1);
 
-		lag_active.setup("", XOR("lag_active"), { XOR("always") ,XOR("move"), XOR("air"), XOR("crouch") }, false);
-		RegisterElement(&lag_active, 1);
-
-		lag_mode.setup("", XOR("lag_mode"), { XOR("max"), XOR("break"), XOR("random"), XOR("break step") }, false);
+		lag_mode.setup("Mode", XOR("lag_mode"), { XOR("Maximum"), XOR("Dynamic"), XOR("Fluctuate") }, false);
 		RegisterElement(&lag_mode, 1);
 
-		lag_limit.setup(XOR("limit"), XOR("lag_limit"), 2, 16, true, 0, 2, 1.f);
+		lag_active.setup("Normal activations", XOR("lag_active"), { XOR("Stand") ,XOR("Move"), XOR("Air"), XOR("Crouch") }, false);
+		RegisterElement(&lag_active, 1);
+
+		lag_limit.setup(XOR("Limit"), XOR("lag_limit"), 2, 16, true, 0, 7, 1.f);
 		RegisterElement(&lag_limit, 1);
 
-		lag_land.setup(XOR("on land"), XOR("lag_land"));
-		RegisterElement(&lag_land, 1);
+		lag_spike_active.setup("Spike activations", XOR("lag_spike_active"), { XOR("On peek") , XOR("Acceleration"), XOR("In air"), XOR("Land")}, false);
+		RegisterElement(&lag_spike_active, 1);
+
+		lag_spike_limit.setup(XOR("Spike limit"), XOR("lag_spike_limit"), 2, 16, true, 0, 16, 1.f);
+		RegisterElement(&lag_spike_limit, 1);
 
 		disablefakelagonkey.setup(XOR("disable fake-lag on key"), XOR("disable fake-lag on key"));
 		RegisterElement(&disablefakelagonkey, 1);
@@ -901,7 +905,7 @@ public:
 		pen_damage.setup(XOR("penetration damage"), XOR("pen_damage"));
 		RegisterElement(&pen_damage, 1);
 
-		indicators.setup(XOR("indicators"), XOR("indicators"), { XOR("lby"), XOR("dt"), XOR("min dmg"), XOR("ping skike"), XOR("lag compensation") });
+		indicators.setup(XOR("indicators"), XOR("indicators"), { XOR("lby"), XOR("choke"), XOR("dt"), XOR("min dmg"), XOR("ping skike"), XOR("lag compensation") });
 		RegisterElement(&indicators, 1);
 
 		tracers.setup(XOR("grenade prediction"), XOR("tracers"));

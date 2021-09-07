@@ -204,8 +204,6 @@ void HVH::AutoDirection() {
 	}
 }
 
-
-
 void HVH::GetAntiAimDirection() {
 	// edge aa.
 	if (g_menu.main.antiaim.edge.get() && g_cl.m_local->m_vecVelocity().length() < 320.f) {
@@ -909,160 +907,190 @@ void HVH::AntiAim() {
 	}
 }
 
+bool is_origin_safe(vec3_t origin)
+{
+	for (int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i) 
+	{
+		Player* player = g_csgo.m_entlist->GetClientEntity< Player* >(i);
+		if (!player)
+			continue;
 
+		if (player->alive() == false || player->enemy(g_cl.m_local) == false || player->dormant())
+			continue;
 
-void HVH::SendPacket() {
-	// if not the last packet this shit wont get sent anyway.
-	// fix rest of hack by forcing to false.
+		vec3_t view = player->GetShootPosition();
+
+		if (view.x)
+		{
+			CTraceFilterWorldOnly filter;
+			CGameTrace            trace;
+
+			g_csgo.m_engine_trace->TraceRay(Ray(view, origin), MASK_SOLID, &filter, &trace);
+
+			if (trace.m_fraction >= 0.97f)
+				return false;
+		}
+	}
+	return true;
+}
+
+void HVH::SendPacket()
+{
 	if (!*g_cl.m_final_packet)
 		*g_cl.m_packet = false;
 
-	// fixing anti-aims after dt off
-	if (!g_aimbot.m_double_tap) {
-		*g_cl.m_packet = g_csgo.m_cl->m_choked_commands >= 1;
-	}
+	static float last_speed = 0;
+	static float last_acceleration = 0;
+	static int choke_resets = 0;
+	static int dt_timer = 0;
 
-	if (g_aimbot.CanDT()) {
-		*g_cl.m_packet = g_csgo.m_cl->m_choked_commands >= 1;
-	}
-	// fake-lag enabled.
-	if (g_menu.main.antiaim.lag_enable.get() && !g_csgo.m_gamerules->m_bFreezePeriod() && !(g_cl.m_flags & FL_FROZEN)) {
-		// limit of lag.
-		int limit = std::min((int)g_menu.main.antiaim.lag_limit.get(), g_cl.m_max_lag);
+	//Special exceptions
+	bool fakewalk_active = g_input.GetKeyState(g_menu.main.movement.fakewalk.get());
+	bool exploit_walk_active = g_input.GetKeyState(g_menu.main.movement.exploitwalk.get());
+	bool disable_fakelag = g_input.GetKeyState(g_menu.main.antiaim.disablefakelagonkey.get());
 
-		// indicates wether to lag or not.
-		bool active{ };
+	if (fakewalk_active || exploit_walk_active)
+		*g_cl.m_packet = false;
+	else if (disable_fakelag)
+		*g_cl.m_packet = g_cl.m_lag > 1;
+	else if (g_aimbot.m_double_tap)
+		*g_cl.m_packet = g_cl.m_lag > 1;
+	else
+	{
+		//Spike activations 
+		bool spike_activations_used = false;
+		auto spike_activations = g_menu.main.antiaim.lag_spike_active.GetActiveIndices();
+		bool spike_send_state = g_cl.m_lag >= (std::min((int)g_menu.main.antiaim.lag_spike_limit.get(), g_cl.m_max_lag));
 
-		// get current origin.
-		vec3_t cur = g_cl.m_local->m_vecOrigin();
-
-		// get prevoius origin.
-		vec3_t prev = g_cl.m_net_pos.empty() ? g_cl.m_local->m_vecOrigin() : g_cl.m_net_pos.front().m_pos;
-
-		// delta between the current origin and the last sent origin.
-		float delta = (cur - prev).length_sqr();
-
-		if (g_aimbot.CanDT())
-			active = false;		
-		else {
-
-			auto activation = g_menu.main.antiaim.lag_active.GetActiveIndices();
-			for (auto it = activation.begin(); it != activation.end(); it++) {
-
-
-				// always
-				if (*it == 0) {
-					active = true;
-					break;
-				}
-				// move.
-				else if (*it == 1 && delta > 0.1f && g_cl.m_speed > 0.1f) {
-					active = true;
-					break;
-				}
-
-				// air.
-				else if (*it == 2 && ((g_cl.m_buttons & IN_JUMP) || !(g_cl.m_flags & FL_ONGROUND))) {
-					active = true;
-					break;
-				}
-
-				// crouch.
-				else if (*it == 3 && g_cl.m_local->m_bDucking()) {
-					active = true;
-					break;
-				}
-			}
-		}
-
-		if (active) {
-			int mode = g_menu.main.antiaim.lag_mode.get();
-
-			// max.
-			if (mode == 0)
-				*g_cl.m_packet = false;
-
-			// break.
-			else if (mode == 1 && delta <= 4096.f)
-				*g_cl.m_packet = false;
-
-			// random.
-			else if (mode == 2) {
-				// compute new factor.
-				if (g_cl.m_lag >= m_random_lag)
-					m_random_lag = g_csgo.RandomInt(2, limit);
-
-				// factor not met, keep choking.
-				else *g_cl.m_packet = false;
-			}
-
-			// break step.
-			else if (mode == 3) {
-				// normal break.
-				if (m_step_switch) {
-					if (delta <= 4096.f)
-						*g_cl.m_packet = false;
-				}
-
-				// max.
-				else *g_cl.m_packet = false;
-			}
-
-			if (g_cl.m_lag >= limit)
-				*g_cl.m_packet = true;
-		}
-	}
-
-	if (!g_menu.main.antiaim.lag_land.get()) {
+		//Just used the old one, worked fine
 		vec3_t                start = g_cl.m_local->m_vecOrigin(), end = start, vel = g_cl.m_local->m_vecVelocity();
 		CTraceFilterWorldOnly filter;
 		CGameTrace            trace;
 
-		// gravity.
 		vel.z -= (g_csgo.sv_gravity->GetFloat() * g_csgo.m_globals->m_interval);
-
-		// extrapolate.
 		end += (vel * g_csgo.m_globals->m_interval);
-
-		// move down.
 		end.z -= 2.f;
-
 		g_csgo.m_engine_trace->TraceRay(Ray(start, end), MASK_SOLID, &filter, &trace);
+		bool landing = trace.m_fraction != 1.f && trace.m_plane.m_normal.z > 0.7f && !(g_cl.m_flags & FL_ONGROUND);
 
-		// check if landed.
-		if (trace.m_fraction != 1.f && trace.m_plane.m_normal.z > 0.7f && !(g_cl.m_flags & FL_ONGROUND))
-			*g_cl.m_packet = true;
+		for (auto it = spike_activations.begin(); it != spike_activations.end(); it++) {
+			if (*it == 0 && g_cl.m_speed > 0.1f) //Peek
+			{
+				vec3_t origin = g_cl.m_local->GetShootPosition();
+				vec3_t origin_18_ticks = origin;
+				vec3_t origin_14_ticks = origin;
+
+				vec3_t vel = g_cl.m_local->m_vecVelocity();
+
+				origin_18_ticks += (vel * g_csgo.m_globals->m_interval) * 24;
+				origin_14_ticks += (vel * g_csgo.m_globals->m_interval) * 10;
+
+				bool safe_16 = is_origin_safe(origin_18_ticks);
+				bool safe_12 = is_origin_safe(origin_14_ticks);
+
+				if (!safe_16 && safe_12)
+				{
+					spike_activations_used = true;
+					*g_cl.m_packet = true;
+					break;
+				}
+				else if (!safe_12)
+				{
+					spike_activations_used = true;
+					*g_cl.m_packet = spike_send_state;
+					break;
+				}
+			}
+			else if (*it == 1 && g_cl.m_speed > 0.1f && last_acceleration > 9) //Acceleration 
+			{
+				spike_activations_used = true;
+				*g_cl.m_packet = spike_send_state;
+				break;
+			}
+			else if (*it == 2 && !(g_cl.m_flags & FL_ONGROUND) && !landing)
+			{
+				spike_activations_used = true;
+				*g_cl.m_packet = spike_send_state;
+				break;
+			}
+			else if (*it == 3 && landing) //On land
+			{
+				spike_activations_used = true;
+				*g_cl.m_packet = g_cl.m_lag > 1;
+				break;
+			}
+		}
+
+		if (!spike_activations_used)
+		{
+			//Normal activations 
+			auto limit = (int)g_menu.main.antiaim.lag_limit.get();
+			auto activations = g_menu.main.antiaim.lag_active.GetActiveIndices();
+			auto mode = g_menu.main.antiaim.lag_mode.get();
+
+			if (mode == 1)
+			{
+				if (g_cl.m_speed < 0.1f && g_cl.m_local->m_flDuckAmount() < 0.01) //set to 2 on stand
+					limit = 2;
+				else if (g_cl.m_local->m_flDuckAmount() > 0.95f && (g_cl.m_flags & FL_ONGROUND)) //2 on duck
+					limit = 2;
+
+				//Else force limit
+			}
+			else if (mode == 2)
+			{
+				if (choke_resets % 2 == 0)
+					limit = 2;
+			}
+
+			bool send_state = g_cl.m_lag >= (std::min(limit, g_cl.m_max_lag));
+			for (auto it = activations.begin(); it != activations.end(); it++) {
+
+				if (*it == 0 && g_cl.m_speed < 0.1f)
+				{
+					*g_cl.m_packet = send_state;
+					break;
+				}
+				else if (*it == 1 && g_cl.m_speed > 0.1f && (g_cl.m_flags & FL_ONGROUND))
+				{
+					*g_cl.m_packet = send_state;
+					break;
+				}
+				else if (*it == 2 && !(g_cl.m_flags & FL_ONGROUND))
+				{
+					*g_cl.m_packet = send_state;
+					break;
+				}
+				else if (*it == 3 && g_cl.m_local->m_bDucking())
+				{
+					*g_cl.m_packet = send_state;
+					break;
+				}
+			}
+		}
 	}
 
-	// force fake-lag to 14 when fakelagging.
-	if (g_input.GetKeyState(g_menu.main.movement.fakewalk.get())) {
-		*g_cl.m_packet = false;
-	}
-	
-	if (g_input.GetKeyState(g_menu.main.movement.exploitwalk.get())) {
-		*g_cl.m_packet = false;
-	}
-
-	if (g_input.GetKeyState(g_menu.main.antiaim.disablefakelagonkey.get())) {
-		*g_cl.m_packet = true;
-	}
-
-	// force fake-lag to 14 when fakelagging.
-	if (m_fakeduck) {
-		*g_cl.m_packet = false;
-	}
-
-	// do not lag while shooting.
 	if (g_cl.m_old_shot)
 		*g_cl.m_packet = true;
 
-	// we somehow reached the maximum amount of lag.
-	// we cannot lag anymore and we also cannot shoot anymore since we cant silent aim.
-	if (g_cl.m_lag >= g_cl.m_max_lag) {
-		// set bSendPacket to true.
+	//Dont lag 200000 ticks
+	if (g_cl.m_lag >= g_cl.m_max_lag)
+	{
 		*g_cl.m_packet = true;
-
-		// disable firing, since we cannot choke the last packet.
+	
+		//Also disable weapon fire on send
 		g_cl.m_weapon_fire = false;
+	}
+
+	if (*g_cl.m_packet) //Check for speed change on send packet
+	{
+		choke_resets++;
+
+		float floored_speed = g_cl.m_speed;
+		if (floored_speed != last_speed)
+		{
+			last_acceleration = floored_speed - last_speed;
+			last_speed = floored_speed;
+		}
 	}
 }

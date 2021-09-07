@@ -538,7 +538,7 @@ void Chams::RenderPlayer(Player* player) {
 				SetAlpha((g_menu.main.visuals.chams_fake_blend.get() / 100.f) / 2.f);
 				SetupMaterial(g_menu.main.visuals.chams_fake_mat.get() == 0 ? debugambientcube : debugdrawflat, g_menu.main.visuals.chams_fake_col.get(), false);
 
-				g_cl.SetAngles2(ang_t(0.f, g_cl.m_radar.y, 0.f));
+				g_cl.SetAngles2(ang_t(0.f, g_cl.m_local->m_flLowerBodyYawTarget(), 0.f));
 			}
 			else
 			{
@@ -548,7 +548,7 @@ void Chams::RenderPlayer(Player* player) {
 				// set material and color.
 				SetupMaterial(g_menu.main.visuals.chams_fake_mat.get() == 0 ? debugambientcube : debugdrawflat, g_menu.main.visuals.chams_fake_col.get(), false);
 
-				g_cl.SetAngles2(ang_t(0.f, g_cl.m_radar.y, 0.f));
+				g_cl.SetAngles2(ang_t(0.f, g_cl.m_local->m_flLowerBodyYawTarget(), 0.f));
 			}
 
 			// manually draw the model.
