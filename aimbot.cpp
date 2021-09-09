@@ -1081,22 +1081,22 @@ bool AimPlayer::GetBestAimPosition(vec3_t& aim, float& damage, LagRecord* record
 	}
 
 	else {
-	if (g_aimbot.m_damage_toggle) {
-		dmg = g_menu.main.aimbot.override_dmg_value.get();
-		pendmg = g_menu.main.aimbot.override_dmg_value.get();
-		pen = g_menu.main.aimbot.override_dmg_value.get();
-	}
-	else {
-		dmg = g_menu.main.aimbot.minimal_damage.get();
-		if (g_menu.main.aimbot.minimal_damage_hp.get())
-			dmg = std::ceil((dmg / 100.f) * hp);
+		if (g_aimbot.m_damage_toggle) {
+			dmg = g_menu.main.aimbot.override_dmg_value.get();
+			pendmg = g_menu.main.aimbot.override_dmg_value.get();
+			pen = g_menu.main.aimbot.override_dmg_value.get();
+		}
+		else {
+			dmg = g_menu.main.aimbot.minimal_damage.get();
+			if (g_menu.main.aimbot.minimal_damage_hp.get())
+				dmg = std::ceil((dmg / 100.f) * hp);
 
-		pendmg = g_menu.main.aimbot.penetrate_minimal_damage.get();
-		if (g_menu.main.aimbot.penetrate_minimal_damage_hp.get())
-			pendmg = std::ceil((pendmg / 100.f) * hp);
+			pendmg = g_menu.main.aimbot.penetrate_minimal_damage.get();
+			if (g_menu.main.aimbot.penetrate_minimal_damage_hp.get())
+				pendmg = std::ceil((pendmg / 100.f) * hp);
 
-		pen = g_menu.main.aimbot.penetrate.get();
-	}
+			pen = g_menu.main.aimbot.penetrate.get();
+		}
 	}
 
 	// write all data of this record l0l.

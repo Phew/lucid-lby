@@ -60,6 +60,16 @@ public:
 		};
 	}
 
+	Color malpha(float _a)
+	{
+		if (_a > 1.0f)
+			_a = 1.0f;
+		else if (_a < 0.0f)
+			_a = 0.0f;
+
+		return Color(this->r(), this->g(), this->b(), this->a() * _a);
+	}
+
 	// member accessors.
 	__forceinline uint8_t& r() { return m_r; }
 	__forceinline uint8_t& g() { return m_g; }

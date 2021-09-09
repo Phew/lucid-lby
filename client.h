@@ -21,6 +21,16 @@ public:
 	__forceinline NetPos(float time, vec3_t pos) : m_time{ time }, m_pos{ pos } {};
 };
 
+struct DamageIndicator_t
+{
+	int iDamage;
+	bool bInitialized;
+	float flEraseTime;
+	float flLastUpdate;
+	Entity* Player;
+	vec3_t Position;
+};
+
 class Client {
 public:
 	// hack thread.
@@ -112,6 +122,7 @@ public:
 	vec3_t	  m_forward_dir;
 
 	penetration::PenetrationOutput_t m_pen_data;
+	std::vector<DamageIndicator_t> DamageIndicator;
 
 	std::deque< Sequence > m_sequences;
 	std::deque< NetPos >   m_net_pos;
