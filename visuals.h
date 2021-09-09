@@ -8,15 +8,24 @@ struct OffScreenDamageData_t {
     __forceinline OffScreenDamageData_t(float time, float m_color_step, Color color) : m_time{ time }, m_color{ color } {}
 };
 
+struct WorldHitmarkerData_t {
+	float m_time, m_alpha;
+	float m_pos_x, m_pos_y, m_pos_z;
+
+	vec2_t m_world_pos;
+	bool m_world_to_screen;
+};
+
 class Visuals {
 public:
     std::array< bool, 64 >                  m_draw;
     std::array< float, 2048 >               m_opacities;
     std::array< OffScreenDamageData_t, 64 > m_offscreen_damage;
+	std::vector< WorldHitmarkerData_t >     m_world_hitmarkers;
     vec2_t                                  m_crosshair;
     bool                                    m_thirdperson;
     bool                                    fakeangels;;
-    float					                m_hit_start, m_hit_end, m_hit_duration;
+	float					                m_hit_start, m_hit_end, m_hit_duration;
 
     // info about planted c4.
     bool                                    planted;
@@ -104,10 +113,12 @@ public:
 public:
     static void ModulateWorld();
     void ThirdpersonThink();
+	void DrawDamageIndicator();
     void Hitmarker();
     void NoSmoke();
     void think();
     void Spectators();
+	void HitmarkerWorld();
     void StatusIndicators();
 	void OtherIndicators();
     void SpreadCrosshair();

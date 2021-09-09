@@ -65,9 +65,13 @@ namespace render {
 	extern Font newmenu_icon;
 	extern Font logevent;
 	extern Font arrows;
+	extern Font grenade_warning_big;
+	extern Font grenade_warning_small;
+	extern Font Spectators;
 
 	void init();
 	bool WorldToScreen(const vec3_t& world, vec2_t& screen);
+	void DrawLine(int x0, int y0, int x1, int y1, Color col, bool shadow);
 	void line(vec2_t v0, vec2_t v1, Color color);
 	void line(int x0, int y0, int x1, int y1, Color color);
 	void rect(int x, int y, int w, int h, Color color);

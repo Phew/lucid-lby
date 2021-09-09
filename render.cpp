@@ -16,6 +16,10 @@ namespace render {
 	Font indicator;;
 	Font logevent;;
 	Font arrows;;
+	Font grenade_warning_big;
+	Font grenade_warning_small;
+	Font Spectators;
+
 }
 
 void render::init() {
@@ -32,6 +36,9 @@ void render::init() {
 	indicator = Font(XOR("Verdana"), 26, FW_BOLD, FONTFLAG_ANTIALIAS | FONTFLAG_DROPSHADOW);
 	logevent = Font(XOR("Lucida Console"), 10, FW_DONTCARE, FONTFLAG_DROPSHADOW);
 	arrows = Font(XOR("Arrows"), 60, FW_NORMAL, FONTFLAG_ANTIALIAS);
+	Spectators = Font(XOR("Verdana"), 13, FW_NORMAL, FONTFLAG_ANTIALIAS | FONTFLAG_DROPSHADOW);
+	grenade_warning_big = Font(XOR("Roboto"), 35, FW_BOLD, FONTFLAG_ANTIALIAS);
+	grenade_warning_small = Font(XOR("Arial"), 12, FW_NORMAL, FONTFLAG_ANTIALIAS);
 }
 
 void render::gradient1337(int x, int y, int w, int h, Color color1, Color color2) {
@@ -64,6 +71,13 @@ bool render::WorldToScreen(const vec3_t& world, vec2_t& screen) {
 
 	return true;
 }
+
+void render::DrawLine(int x0, int y0, int x1, int y1, Color col, bool shadow)
+{
+	g_csgo.m_surface->DrawSetColor(col);
+	g_csgo.m_surface->DrawLine(x0, y0, x1, y1);
+}
+
 
 void render::line(vec2_t v0, vec2_t v1, Color color) {
 	g_csgo.m_surface->DrawSetColor(color);

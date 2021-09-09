@@ -152,6 +152,47 @@ void Visuals::ThirdpersonThink() {
 	}
 }
 
+void Visuals::DrawDamageIndicator()
+{
+	Color  color;
+
+	float complete = (g_csgo.m_globals->m_curtime - m_hit_start) / 2.0f;
+	int alpha = (1.f - complete) * 240;
+
+	if (!g_menu.main.misc.draw_damage.get() || !g_cl.m_local || !g_cl.m_local->alive())
+		return;
+
+	float CurrentTime = g_cl.m_local->m_nTickBase() * g_csgo.m_globals->m_interval;
+
+	for (int i = 0; i < g_cl.DamageIndicator.size(); ++i)
+	{
+		if (g_cl.DamageIndicator[i].flEraseTime < CurrentTime)
+		{
+			g_cl.DamageIndicator.erase(g_cl.DamageIndicator.begin() + i);
+			continue;
+		}
+
+		if (!g_cl.DamageIndicator[i].bInitialized)
+		{
+			g_cl.DamageIndicator[i].Position = g_cl.DamageIndicator[i].Player->GetBonePosition(HITBOX_HEAD);
+			g_cl.DamageIndicator[i].bInitialized = true;
+		}
+
+		if (CurrentTime - g_cl.DamageIndicator[i].flLastUpdate > 0.0001f)
+		{
+			g_cl.DamageIndicator[i].Position.z -= (0.5f * (CurrentTime - g_cl.DamageIndicator[i].flEraseTime));
+			g_cl.DamageIndicator[i].flLastUpdate = CurrentTime;
+		}
+
+		vec2_t ScreenPosition;
+
+		if (render::WorldToScreen(g_cl.DamageIndicator[i].Position, ScreenPosition))
+		{
+			render::esp.string(ScreenPosition.x, ScreenPosition.y, { 255,255,255, alpha }, std::to_string(g_cl.DamageIndicator[i].iDamage).c_str());
+		}
+	}
+}
+
 void Visuals::Hitmarker() {
 
 	static auto cross = g_csgo.m_cvar->FindVar(HASH("weapon_debug_spread_show"));
@@ -255,6 +296,55 @@ void Visuals::Hitmarker() {
 	}
 }*/
 
+void Visuals::HitmarkerWorld() {
+	if (!g_menu.main.misc.hitmarker_world.get())
+		return;
+
+	for (size_t i{ }; i < m_world_hitmarkers.size(); ++i) {
+		WorldHitmarkerData_t& info = m_world_hitmarkers[i];
+
+		// If the delta between the current time and hurt time is larger than 2 seconds then we should erase
+		if (g_csgo.m_globals->m_curtime - info.m_time > 2.0f) {
+			info.m_alpha -= (1.0f / 2.0f) * g_csgo.m_globals->m_frametime;
+			info.m_alpha = std::clamp<float>(info.m_alpha, 0.0f, 1.0f);
+		}
+
+		if (info.m_alpha <= 0.0f) {
+			continue;
+		}
+
+		if (info.m_world_to_screen) {
+			constexpr int line{ 8 };
+
+			auto draw_lines = [&](vec2_t pos_custom, Color clr) -> void {
+				render::DrawLine(
+					pos_custom.x - 6, pos_custom.y - 6,
+					pos_custom.x - 2, pos_custom.y - 2,
+					clr.malpha(info.m_alpha), true);
+
+				render::DrawLine(
+					pos_custom.x - 6, pos_custom.y + 6,
+					pos_custom.x - 2, pos_custom.y + 2,
+					clr.malpha(info.m_alpha), true);
+
+				render::DrawLine(
+					pos_custom.x + 6, pos_custom.y + 6,
+					pos_custom.x + 2, pos_custom.y + 2,
+					clr.malpha(info.m_alpha), true);
+
+				render::DrawLine(
+					pos_custom.x + 6, pos_custom.y - 6,
+					pos_custom.x + 2, pos_custom.y - 2,
+					clr.malpha(info.m_alpha), true);
+
+			};
+			// hitmarker
+			draw_lines(info.m_world_pos, Color(255, 255, 255, 255));
+		}
+	}
+}
+
+
 
 void Visuals::NoSmoke() {
 	if (!g_menu.main.visuals.nosmoke.get())
@@ -313,12 +403,18 @@ void Visuals::think() {
 		draw(ent);
 	}
 
+	for (size_t i{ }; i < m_world_hitmarkers.size(); ++i) {
+		WorldHitmarkerData_t& info = m_world_hitmarkers[i];
+		info.m_world_to_screen = render::WorldToScreen(vec3_t(info.m_pos_x, info.m_pos_y, info.m_pos_z), info.m_world_pos);
+	}
+
 	// draw everything else.
 	OtherIndicators();
 	SpreadCrosshair();
 	StatusIndicators();
 	Spectators();
 	PenetrationCrosshair();
+	DrawDamageIndicator();
 	g_movement.AutoPeekPaint();
 	Hitmarker();
 	DrawPlantedC4();
@@ -329,7 +425,7 @@ void Visuals::Spectators() {
 		return;
 
 	std::vector< std::string > spectators{ XOR("") };
-	int h = render::logevent.m_size.m_height;
+	int h = render::Spectators.m_size.m_height;
 
 	for (int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i) {
 		Player* player = g_csgo.m_entlist->GetClientEntity< Player* >(i);
@@ -377,7 +473,7 @@ void Visuals::OtherIndicators() {
 	std::vector< Indicator_t > indicators{ };
 
 	// PING
-	if (g_menu.main.visuals.indicators.get(4)) {
+	if (g_menu.main.visuals.indicators.get(3)) {
 		Indicator_t ind{ };
 		ind.color = g_aimbot.m_fake_latency ? 0xff15c27b : 0xff0000ff;
 		ind.text = XOR("PING");
@@ -386,7 +482,7 @@ void Visuals::OtherIndicators() {
 	}
 
 	// MIN DMG OVERRIDE
-	if (g_menu.main.visuals.indicators.get(3)) {
+	if (g_menu.main.visuals.indicators.get(2)) {
 		Indicator_t ind{ };
 		ind.color = g_aimbot.m_damage_toggle ? 0xff15c27b : 0xff0000ff;
 		ind.text = XOR("DMG");
@@ -417,13 +513,27 @@ void Visuals::StatusIndicators() {
 	struct Indicator_t { Color color; std::string text; };
 	std::vector< Indicator_t > indicators{ };
 
-	if (g_menu.main.visuals.indicators.get(1)) {
-		//Choke
-		Indicator_t ind{ };
-		ind.color = 0xffffffff;
-		ind.text = tfm::format(XOR("CHOKE: %d"), g_cl.m_lag);
-		indicators.push_back(ind);
+	// LC
+	if (g_menu.main.visuals.indicators.get(5)) {
+		if (g_cl.m_local->m_vecVelocity().length_2d() > 270.f || g_cl.m_lagcomp) {
+			Indicator_t ind{ };
+			ind.color = g_cl.m_lagcomp ? 0xff15c27b : 0xff0000ff;
+			ind.text = XOR("LC");
+
+			indicators.push_back(ind);
+		}
 	}
+
+	// DT
+	if (g_menu.main.visuals.indicators.get(1)) {
+		if (g_aimbot.m_double_tap) {
+			Indicator_t ind{ };
+			ind.color = g_cl.m_charged ? 0xffffffff : 0xff0000ff;
+			ind.text = XOR("DT");
+			indicators.push_back(ind);
+		}
+	}
+
 
 	// LBY
 	if (g_menu.main.visuals.indicators.get(0)) {
@@ -436,27 +546,6 @@ void Visuals::StatusIndicators() {
 		indicators.push_back(ind);
 	}
 
-	// DT
-	if (g_menu.main.visuals.indicators.get(2)) {
-		if (g_aimbot.m_double_tap) {
-			Indicator_t ind{ };
-			ind.color = g_cl.m_charged ? 0xffffffff : 0xff0000ff;
-			ind.text = XOR("DT");
-			indicators.push_back(ind);
-		}
-	}
-
-	// LC
-	if (g_menu.main.visuals.indicators.get(6)) {
-		if (g_cl.m_local->m_vecVelocity().length_2d() > 255.f || g_cl.m_lagcomp) {
-			Indicator_t ind{ };
-			ind.color = g_cl.m_lagcomp ? 0xff15c27b : 0xff0000ff;
-			ind.text = XOR("LC");
-
-			indicators.push_back(ind);
-		}
-	}
-
 	if (indicators.empty())
 		return;
 
@@ -465,6 +554,57 @@ void Visuals::StatusIndicators() {
 		auto& indicator = indicators[i];
 
 		render::indicator.string(12, g_cl.m_height - 64 - (30 * i), indicator.color, indicator.text);
+	}
+
+	auto local_player = g_cl.m_local;
+	int screen_width, screen_height;
+	g_csgo.m_engine->GetScreenSize(screen_width, screen_height);
+
+	static float next_lby_update[65];
+	//static float last_lby[65];
+
+	const float curtime = g_csgo.m_globals->m_curtime;
+
+	//if (local_player->GetVelocity().Length2D() > 0.1 && !global::is_fakewalking)
+	//    return;
+
+	//render::rect_filled(14, g_cl.m_height - 74 + 26, 48, 4, { 10, 10, 10, 125 });
+	//render::rect_filled(14, g_cl.m_height - 74 + 26, 48, 4, { 10, 10, 10, 125 });
+	//render::rect_filled(15, g_cl.m_height - 74 + 27, add * 40, 2, color1337);
+
+	if (local_player->m_vecVelocity().length_2d() > 0.1f && !g_input.GetKeyState(g_menu.main.movement.fakewalk.get()))
+		return;
+
+	CCSGOPlayerAnimState* state = g_cl.m_local->m_PlayerAnimState();
+	if (!state)
+		return;
+	static float last_lby[65];
+	if (last_lby[local_player->index()] != local_player->m_flLowerBodyYawTarget())
+	{
+		last_lby[local_player->index()] = local_player->m_flLowerBodyYawTarget();
+		next_lby_update[local_player->index()] = curtime + 1.125f + g_csgo.m_globals->m_interval;
+	}
+
+	if (next_lby_update[local_player->index()] < curtime)
+	{
+		next_lby_update[local_player->index()] = curtime + 1.125f;
+	}
+
+	float time_remain_to_update = next_lby_update[local_player->index()] - local_player->m_flSimulationTime();
+	float time_update = next_lby_update[local_player->index()];
+
+
+	float fill = 0;
+	fill = (((time_remain_to_update)));
+	static float add = 0.000f;
+	add = 1.125f - fill;
+
+	float change1337 = std::abs(math::NormalizedAngle(g_cl.m_body - g_cl.m_angle.y));
+
+	Color color1337 = { 255,0,0,255 };
+
+	if (change1337 > 35.f) {
+		color1337 = { 124,195,13,255 };
 	}
 }
 
@@ -648,8 +788,15 @@ void Visuals::DrawProjectile(Weapon* ent) {
 
 	// draw molotov.
 	else if (ent->is(HASH("CMolotovProjectile")))
-		render::esp_small.string(screen.x, screen.y, col, XOR("MOLITOV"), render::ALIGN_CENTER);
+	{
+		int dist = (((origin - g_cl.m_local->m_vecOrigin()).length_sqr()) * 0.0625) * 0.001;
+		render::circle(screen.x, screen.y - 50, 30, 360, { 0, 0, 0, 255 });
+		render::grenade_warning_big.string(screen.x, screen.y - 75, { 252, 243, 105, 255 }, XOR("!"), render::ALIGN_CENTER);
+		render::grenade_warning_small.string(screen.x, screen.y - 40, col, tfm::format(XOR("%i ft"), dist), render::ALIGN_CENTER);
+		render::esp_small.string(screen.x, screen.y, col, XOR("molly"), render::ALIGN_CENTER);
+	}
 
+	
 	else if (ent->is(HASH("CBaseCSGrenadeProjectile"))) {
 		const model_t* model = ent->GetModel();
 
@@ -658,15 +805,15 @@ void Visuals::DrawProjectile(Weapon* ent) {
 			std::string name{ ent->GetModel()->m_name };
 
 			if (name.find(XOR("flashbang")) != std::string::npos)
-				render::esp_small.string(screen.x, screen.y, col, XOR("FLASHBANG"), render::ALIGN_CENTER);
+				render::esp_small.string(screen.x, screen.y, col, XOR("flash"), render::ALIGN_CENTER);
 
-			else if (name.find(XOR("fraggrenade")) != std::string::npos) {
-
-				// grenade range.
-				if (g_menu.main.visuals.proj_range.get(0))
-					render::sphere(origin, 10.f, 5.f, 1.f, g_menu.main.visuals.proj_range_color.get());
-
-				render::esp_small.string(screen.x, screen.y, col, XOR("FRAG-GRENADE"), render::ALIGN_CENTER);
+			else if (name.find(XOR("fraggrenade")) != std::string::npos)
+			{
+				int dist = (((origin - g_cl.m_local->m_vecOrigin()).length_sqr()) * 0.0625) * 0.001;
+				render::circle(screen.x, screen.y - 50, 30, 360, { 0, 0, 0, 255 });
+				render::grenade_warning_big.string(screen.x, screen.y - 75, { 252, 243, 105, 255 }, XOR("!"), render::ALIGN_CENTER);
+				render::grenade_warning_small.string(screen.x, screen.y - 40, col, tfm::format(XOR("%i ft"), dist), render::ALIGN_CENTER);
+				render::esp_small.string(screen.x, screen.y, col, XOR("frag"), render::ALIGN_CENTER);
 			}
 		}
 	}

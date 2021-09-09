@@ -189,8 +189,8 @@ void HVH::AutoDirection() {
 	// put the most distance at the front of the container.
 	std::sort(angles.begin(), angles.end(),
 		[](const AdaptiveAngle& a, const AdaptiveAngle& b) {
-			return a.m_dist > b.m_dist;
-		});
+		return a.m_dist > b.m_dist;
+	});
 
 	// the best angle should be at the front now.
 	AdaptiveAngle* best = &angles.front();
@@ -232,7 +232,7 @@ void HVH::GetAntiAimDirection() {
 			float  best_fov{ std::numeric_limits< float >::max() };
 			float  best_dist{ std::numeric_limits< float >::max() };
 			float  fov, dist;
-			Player* target, * best_target{ nullptr };
+			Player* target, *best_target{ nullptr };
 
 			for (int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i) {
 				target = g_csgo.m_entlist->GetClientEntity< Player* >(i);
@@ -630,7 +630,7 @@ void HVH::DoRealAntiAim() {
 				break;
 			}
 
-				  // rotate.
+					// rotate.
 			case 3: {
 				// set base angle.
 				g_cl.m_cmd->m_view_angles.y = (m_direction - m_rot_range / 2.f);
@@ -641,7 +641,7 @@ void HVH::DoRealAntiAim() {
 				break;
 			}
 
-				  // random.
+					// random.
 			case 4:
 				// check update time.
 				if (g_csgo.m_globals->m_curtime >= m_next_random_update) {
@@ -708,7 +708,7 @@ void HVH::DoFakeAntiAim() {
 		break;
 	}
 
-		  // rotate.
+			// rotate.
 	case 4:
 		g_cl.m_cmd->m_view_angles.y = m_direction + 90.f + std::fmod(g_csgo.m_globals->m_curtime * 360.f, 180.f);
 		break;
@@ -909,7 +909,7 @@ void HVH::AntiAim() {
 
 bool is_origin_safe(vec3_t origin)
 {
-	for (int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i) 
+	for (int i{ 1 }; i <= g_csgo.m_globals->m_max_clients; ++i)
 	{
 		Player* player = g_csgo.m_entlist->GetClientEntity< Player* >(i);
 		if (!player)
@@ -976,29 +976,41 @@ void HVH::SendPacket()
 		for (auto it = spike_activations.begin(); it != spike_activations.end(); it++) {
 			if (*it == 0 && g_cl.m_speed > 0.1f) //Peek
 			{
-				vec3_t origin = g_cl.m_local->GetShootPosition();
-				vec3_t origin_18_ticks = origin;
-				vec3_t origin_14_ticks = origin;
+				vec3_t shooting_pos = g_cl.m_local->GetShootPosition();
+				vec3_t abs_origin = g_cl.m_local->GetAbsOrigin();
 
-				vec3_t vel = g_cl.m_local->m_vecVelocity();
-
-				origin_18_ticks += (vel * g_csgo.m_globals->m_interval) * 24;
-				origin_14_ticks += (vel * g_csgo.m_globals->m_interval) * 10;
-
-				bool safe_16 = is_origin_safe(origin_18_ticks);
-				bool safe_12 = is_origin_safe(origin_14_ticks);
-
-				if (!safe_16 && safe_12)
+				for (int i = 1; i < 10; i++)
 				{
-					spike_activations_used = true;
-					*g_cl.m_packet = true;
-					break;
-				}
-				else if (!safe_12)
-				{
-					spike_activations_used = true;
-					*g_cl.m_packet = spike_send_state;
-					break;
+					float z_offset = (shooting_pos.z - abs_origin.z) * (i / 10.f);
+
+					vec3_t origin = g_cl.m_local->GetAbsOrigin();
+					origin.z += z_offset;
+
+					vec3_t origin_18_ticks = origin;
+					vec3_t origin_14_ticks = origin;
+
+					vec3_t vel = g_cl.m_local->m_vecVelocity();
+
+					origin_18_ticks += (vel * game::TICKS_TO_TIME(14));
+					origin_14_ticks += (vel * game::TICKS_TO_TIME(10));;
+
+					//g_csgo.m_debug_overlay->AddLineOverlay(origin_14_ticks, origin_18_ticks, 255, 0, 0, true, 0.05f);
+
+					bool safe_16 = is_origin_safe(origin_18_ticks);
+					bool safe_12 = is_origin_safe(origin_14_ticks);
+
+					if (!safe_16 && safe_12)
+					{
+						spike_activations_used = true;
+						*g_cl.m_packet = true;
+						break;
+					}
+					else if (!safe_12)
+					{
+						spike_activations_used = true;
+						*g_cl.m_packet = spike_send_state;
+						break;
+					}
 				}
 			}
 			else if (*it == 1 && g_cl.m_speed > 0.1f && last_acceleration > 9) //Acceleration 
@@ -1077,7 +1089,7 @@ void HVH::SendPacket()
 	if (g_cl.m_lag >= g_cl.m_max_lag)
 	{
 		*g_cl.m_packet = true;
-	
+
 		//Also disable weapon fire on send
 		g_cl.m_weapon_fire = false;
 	}

@@ -189,54 +189,45 @@ void Shots::OnImpact(IGameEvent* evt) {
 	name = std::string(info.m_name).substr(0, 24);
 
 	// we did not hit jackshit, or someone else.
-	if (!trace.m_entity || !trace.m_entity->IsPlayer() || trace.m_entity != target)
-	{
-		std::string s = tfm::format(XOR("missed due to spread\n"));
+	if (!trace.m_entity || !trace.m_entity->IsPlayer() || trace.m_entity != target ){
+		std::string s = tfm::format(XOR("missed due to resolver\n"));
 		g_notify.add(s);
-	}
+}
+		
+
+
 	// we should have 100% hit this player..
 	// this is a miss due to wrong angles.
 	else if (trace.m_entity == target) {
 		size_t mode = shot->m_record->m_mode;
-		std::string resolver_mode = "";
-
 
 		// if we miss a shot on body update.
 		// we can chose to stop shooting at them.
 		if (mode == Resolver::Modes::RESOLVE_BODY) {
-			resolver_mode = "lower body yaw update";
 			++data->m_body_index;
 		}
 
 		else if (mode == Resolver::Modes::RESOLVE_LASTMOVE) {
-			resolver_mode = "last moving";
 			++data->m_last_move;
 		}
 
 		else if (mode == Resolver::Modes::RESOLVE_UNKNOWM) {
-			resolver_mode = "unkown moving";
 			++data->m_unknown_move;
 		}
 
 		else if (mode == Resolver::Modes::RESOLVE_STAND) {
-			resolver_mode = "stand";
 			++data->m_stand_index;
 		}
 
 		else if (mode == Resolver::Modes::RESOLVE_STAND2) {
-			resolver_mode = "stand 2";
 			++data->m_stand_index2;
 		}
 
 		else if (mode == Resolver::Modes::RESOLVE_BODY) {
-			resolver_mode = "lower body yaw update";
 			++data->m_body_index;
 		}
 
 		++data->m_missed_shots;
-
-		//std::string s = tfm::format(XOR("missed due to resolver (Mode: %s)\n"), resolver_mode);
-		//g_notify.add(s);
 	}
 
 	// restore player to his original state.

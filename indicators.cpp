@@ -4,6 +4,43 @@ hud_indicators g_indicators{ };
 
 // Hardcoded too much
 // indicators
+
+void hud_indicators::DrawFrame(const vec2_t& pos, const std::string& name, const std::vector<std::string>& first_column, const std::vector<std::string>& second_column) {
+	render::FontSize_t size = render::esp.size(name);
+
+	/// Base
+	render::rect_filled(pos.x, pos.y, 150, 2, g_gui.m_color);
+	render::rect_filled(pos.x, pos.y + 2, 150, size.m_height + 5, { 0, 0, 0, 125 });
+
+	/// Label
+	render::hud.string(pos.x + 75, pos.y + 5, Color(255, 255, 255, 255), name, render::ALIGN_CENTER);
+
+	/// Left column
+	if (!first_column.empty()) {
+		/// C'mon, let's go.
+		auto builder_pos = pos + 25;
+
+		/// Ampersand imeni Platina300.
+		for (const auto& item : first_column) {
+			render::hud.string(pos.x + 5, builder_pos.y, Color(255, 255, 255, 255), item.c_str(), render::ALIGN_LEFT);
+
+			builder_pos.y += 15;
+		}
+	}
+
+	/// Right column.
+	if (!second_column.empty()) {
+		/// C'mon, let's go.
+		auto builder_pos = pos + 25;
+
+		/// Ampersand imeni Platina300.
+		for (const auto& item : second_column) {
+			render::hud.string(pos.x + 145, builder_pos.y, Color(255, 255, 255, 255), item.c_str(), render::ALIGN_RIGHT);
+
+			builder_pos.y += 15;
+		}
+	}
+}
 void hud_indicators::Indicators()
 {
 	if (!g_csgo.m_engine->IsInGame())

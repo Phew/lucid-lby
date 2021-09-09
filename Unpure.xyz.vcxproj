@@ -220,6 +220,7 @@
     <ClInclude Include="csgo.h" />
     <ClInclude Include="cvar.h" />
     <ClInclude Include="datamap.h" />
+    <ClInclude Include="detours.h" />
     <ClInclude Include="dropdown.h" />
     <ClInclude Include="edit.h" />
     <ClInclude Include="element.h" />
